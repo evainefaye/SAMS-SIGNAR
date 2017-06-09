@@ -20,8 +20,12 @@ namespace SignalR.Server.Web
         // Gets the userId of the logged in user
         public void GetUserName()
         {
-            string userName = System.Environment.UserName.ToLower();
-            SetUserName(userName);
+            if (Context.User.Identity.IsAuthenticated)
+            {
+                string userName = System.Environment.UserName.ToLower();
+                userName = Context.User.Identity.Name.GetUserName().ToLower();
+                SetUserName(userName);
+            }
         }
 
         // Sets the UserName and displays old (if previously set) and new name
@@ -60,7 +64,6 @@ namespace SignalR.Server.Web
             UserInfo userInfo = new UserInfo();
             Users.Add(connectionId, userInfo);
             GetUserName();
-            Clients.Caller.echo("Auth: " + Context.User.Identity.IsAuthenticated);
             return base.OnConnected();
         }
 
