@@ -4,7 +4,7 @@ using Microsoft.AspNet.SignalR;
 using System;
 using System.Collections.Generic;
 
-namespace SignalR.Server.Web
+namespace SignalRServerWeb
 {
     public class MyHub : Hub
     {
@@ -17,34 +17,25 @@ namespace SignalR.Server.Web
             Clients.Caller.echo(text);
         }
 
-        // Gets the userId of the logged in user
-        public void GetUserName()
-        {
-            if (Context.User.Identity.IsAuthenticated)
-            {
-                string userName = System.Environment.UserName.ToLower();
-                userName = Context.User.Identity.Name.GetUserName().ToLower();
-                SetUserName(userName);
-            }
-        }
-
         // Sets the UserName and displays old (if previously set) and new name
-        public void SetUserName(string userName)
+        public void SetUserName(string newName)
         {
+            newName = newName.Trim().ToLower();
             // Do Nothing if Username was empty
-            if (userName == "")
+            if (String.IsNullOrEmpty(newName)) 
             {
                 return;
             }
             // Get Key for Dictionary Item
             string connectionId = Context.ConnectionId;
-            UserInfo UserInfo;
-            Users.TryGetValue(connectionId, out UserInfo);
-            if (UserInfo.UserName != null) {
-                Clients.Caller.echo("OldName: " + UserInfo.UserName);
+            if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
+            {
+                string oldName = UserInfo.UserName;
+                Clients.Caller.echo("Old Name: " + oldName + " New Name: " + newName);
+            } else { 
+                Clients.Caller.echo("New Name: " + newName);
             }
-            Clients.Caller.echo("NewName: " + userName);
-            UserInfo.UserName = userName;
+            UserInfo.UserName = newName;
             Users[connectionId] = UserInfo;
         }
 
@@ -52,32 +43,42 @@ namespace SignalR.Server.Web
         public void ShowUserName()
         {
             string connectionId = Context.ConnectionId;
-            UserInfo UserInfo;
-            Users.TryGetValue(connectionId, out UserInfo);
-            Clients.Caller.echo("UserName: " + UserInfo.UserName);
+            Users.TryGetValue(connectionId, out UserInfo UserInfo);
+            Clients.Caller.echo("Stored Name: " + UserInfo.UserName);
         }
 
-        
+        public string GetUserNameByConnectionId(string connectionId)
+        {
+            UserInfo UserInfo;
+            Users.TryGetValue(connectionId, out UserInfo);
+            return UserInfo.UserName;
+        }
+
+
         public override Task OnConnected()
         {
             string connectionId = Context.ConnectionId;
             UserInfo userInfo = new UserInfo();
             Users.Add(connectionId, userInfo);
-            GetUserName();
+            if (Context.User.Identity.IsAuthenticated)
+            {
+                string userName = Context.User.Identity.Name.GetUserName().Trim().ToLower();
+                SetUserName(userName);
+            }
             return base.OnConnected();
         }
 
         public override Task OnDisconnected(bool stopCalled)
         {
             string connectionId = Context.ConnectionId;
+            string userName = GetUserNameByConnectionId(connectionId);
+            Clients.Others.echo("Disconnected User: " + userName);
             Users.Remove(connectionId);
-            Clients.All.echo("Client Disconnect Detected");
             return base.OnDisconnected(stopCalled);
         }
 
         public override Task OnReconnected()
         {
-            Clients.Caller.echo("Welcome back!");
             return base.OnReconnected();
         }
     }

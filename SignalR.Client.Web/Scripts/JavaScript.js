@@ -1,7 +1,18 @@
 ﻿$(document).ready(function () {
-    $.connection.hub.url = "/server/signalr/";
-//    $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
-//    $.connection.hub.url = "http://localhost:49608/signalr/";
+
+    // Set the location of the HUB based on URL
+    switch (window.location.hostname.toLowerCase()) {
+        case "laptop":
+            $.connection.hub.url = "http://laptop/server/signalr/";
+            break;
+        case "localhost":
+            $.connection.hub.url = "http://localhost:49608/signalr/";
+            break;
+        case "client.sams.hawkbane.biz":
+            $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
+            break;
+    }
+
     myHub = $.connection.myHub;
 
     // Default Client Echo Method

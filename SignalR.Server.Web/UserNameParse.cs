@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace SignalR.Server.Web
+namespace SignalRServerWeb
 {
     public static class UserNameParse
     {
