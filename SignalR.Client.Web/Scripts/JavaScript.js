@@ -1,10 +1,12 @@
 ﻿$(document).ready(function () {
 
-    $.connection.hub.url = "http://sams.hawkbane.biz/signalr/";
+//    $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
+    $.connection.hub.url = "http://localhost:49608/signalr/";
     myHub = $.connection.myHub;
 
-    // Default Hello Method
-    myHub.client.hello = function () {
+    // Default Client Echo Method
+    myHub.client.echo = function (text) {
+        console.log(text);
     };
 
     $.connection.hub.start()

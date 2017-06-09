@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.Server.Web", "SignalR.Server.Web\SignalR.Server.Web.csproj", "{7905ACE4-EC9A-4190-82D7-7C1BB634B73C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.Client.Web", "SignalR.Client.Web\SignalR.Client.Web.csproj", "{B01217FB-7104-4F3A-9DD1-CFBE6499E267}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7905ACE4-EC9A-4190-82D7-7C1BB634B73C} = {7905ACE4-EC9A-4190-82D7-7C1BB634B73C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
