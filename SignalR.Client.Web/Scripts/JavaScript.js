@@ -1,7 +1,8 @@
 ﻿$(document).ready(function () {
 
-//    $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
-    $.connection.hub.url = "http://localhost:49608/signalr/";
+    $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
+  
+//    $.connection.hub.url = "http://localhost:49608/signalr/";
     myHub = $.connection.myHub;
 
     // Default Client Echo Method
