@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace SignalRServerWeb
+namespace SignalR.Server.Web
 { 
     public class UserInfo
     {

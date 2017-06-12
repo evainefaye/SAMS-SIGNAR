@@ -4,14 +4,17 @@
     <meta charset="utf-8" />
     <title></title>
 
-    <!-- Start Connect to SignalR -->
+    <!-- I installed the following Add on to Enable NTLM logins Easier
+        https://addons.mozilla.org/en-Us/firefox/addon/integrated-auth-for-firefox/
+    -->
+
+
+    <!-- Begin Add SignalR -->
+
     <script src="Scripts/jquery-3.1.1.min.js"></script>
     <script src="Scripts/jquery.signalR-2.2.2.min.js"></script>
 
     <!-- Location of Hubs Proxy -->
-    <!-- I installed the following Add on to Enable NTLM logins Easier
-        https://addons.mozilla.org/en-Us/firefox/addon/integrated-auth-for-firefox/
-    -->
 
     <!--
         Location of various Hubs Files, change this based on where your publishing to -->
@@ -28,14 +31,57 @@
         <script src="http://localhost:49608/signalr/hubs/"></script>
     -->
 
+    <script src="http://server.sams.hawkbane.biz/signalr/hubs/"></script>
 
-    <script src="http://laptop/server/signalr/hubs/"></script>
+    <!-- End Add SignalR -->
 
-    <!-- End Connect to SignalR -->
+    <!-- Begin add Bootstrap -->
 
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+    <!-- End Add Bootstrap -->
+
+    <link rel="stylesheet" href="Stylesheets/StyleSheet.css" />
     <script src="Scripts/JavaScript.js"></script>
 </head>
 <body>
-    Test
+    <div class="initializationScreen">
+        INITIALIZING....
+    </div>
+    <div class="mainScreen">
+        <div>User Name: 
+            <span id="CurrentUserName"></span>
+            <input type="text"id="NewUserName" />
+            <button class="btn-primary" id="UpdateUserName">Update User Name</button>
+            <button class="btn-primary" id="EmulateStartSASHA">Emulate Start SASHA</button>
+            <button class="btn-primary" id="RefreshSASHAConnections">Refresh SASHA Connections</button>
+        </div>
+        <br />
+        <table id="sashaConnections" class="center">
+            <thead>
+                <tr>
+                    <th>SignalR ConnectionId</th>
+                    <th>User Name</th>
+                    <th>Motive Session Id</th>
+                    <th>Flow Start Time</th>
+                    <th>Node Name</th>
+                    <th>Node Start Time</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        <div>
+            <ul id="activity">
+            </ul>
+        </div>
+    </div>
 </body>
 </html>
