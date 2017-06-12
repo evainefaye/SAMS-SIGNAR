@@ -48,6 +48,12 @@
 
     <!-- End Add Bootstrap -->
 
+    <!-- Begin add countdown -->
+    <script src="/Scripts/jquery.plugin.min.js"></script>
+    <script src="/Scripts/jquery.countdown.min.js"></script>
+    <link rel="stylesheet" href="Stylesheets/jquery.countdown.css" />
+    <!-- End add countdown -->
+
     <link rel="stylesheet" href="Stylesheets/StyleSheet.css" />
     <script src="Scripts/JavaScript.js"></script>
 </head>
@@ -58,26 +64,13 @@
     <div class="mainScreen">
         <div>User Name: 
             <span id="CurrentUserName"></span>
-            <input type="text"id="NewUserName" />
-            <button class="btn-primary" id="UpdateUserName">Update User Name</button>
-            <button class="btn-primary" id="EmulateStartSASHA">Emulate Start SASHA</button>
             <button class="btn-primary" id="RefreshSASHAConnections">Refresh SASHA Connections</button>
         </div>
         <br />
-        <table id="sashaConnections" class="center">
-            <thead>
-                <tr>
-                    <th>SignalR ConnectionId</th>
-                    <th>User Name</th>
-                    <th>Motive Session Id</th>
-                    <th>Flow Start Time</th>
-                    <th>Node Name</th>
-                    <th>Node Start Time</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <ul id="skillgroupsTab" class="nav nav-tabs">
+        </ul>
+        <div id="skillgroupsContent" class="tab-content">
+        </div>
         <div>
             <ul id="activity">
             </ul>

@@ -31,59 +31,76 @@ namespace SignalR.Server.Web
             }
         }
 
-        // Sets the UserName and displays old (if previously set) and new name
-        public void SetUserName(string newName)
-        {
-            newName = newName.Trim().ToLower();
-            // Do Nothing if Username was empty
-            if (String.IsNullOrEmpty(newName)) 
-            {
-                return;
-            }
-            // Get Key for Dictionary Item
-            string connectionId = Context.ConnectionId;
-            if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
-            {
-                string oldName = UserInfo.UserName;
-                if (String.IsNullOrEmpty(oldName))
-                {
-                    ShowActivity("others", "User " + oldName + " now known as  " + newName);
-                    ShowActivity("caller", "You will now be known as  " + newName);
-                }
-            }
-            Clients.Caller.updateUserName(newName); // Update UserName 
-            UserInfo.UserName = newName;
-            Users[connectionId] = UserInfo;
-        }
+//        // Sets the UserName and displays old (if previously set) and new name
+//        public void SetUserName(string newName)
+//        {
+//            newName = newName.Trim().ToLower();
+//            // Do Nothing if Username was empty
+//            if (String.IsNullOrEmpty(newName)) 
+//            {
+//                return;
+//            }
+//            // Get Key for Dictionary Item
+//            string connectionId = Context.ConnectionId;
+//            if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
+//            {
+//                string oldName = UserInfo.attUID;
+//                if (String.IsNullOrEmpty(oldName))
+//                {
+//                    ShowActivity("others", "User " + oldName + " now known as  " + newName);
+//                    ShowActivity("caller", "You will now be known as  " + newName);
+//                }
+//            }
+//            Clients.Caller.updateUserName(newName); // Update UserName 
+//            UserInfo.attUID = newName;
+//            Users[connectionId] = UserInfo;
+//        }
 
-        public string GetUserNameByConnectionId(string connectionId)
+        // Return UserName when you submit the connectionId
+        public string GetAgentNameByConnectionId(string connectionId)
         {
             Users.TryGetValue(connectionId, out UserInfo UserInfo);
-            return UserInfo.UserName;
+            return UserInfo.agentName;
         }
 
-        // Update the user record with parameters
-        public void StartSASHASession()
+        // Registers a SASHA Session with agentName, locationCode, and smpSessionId
+        public void RegisterSASHASession(string attUID, string agentName, string locationCode, string smpSessionId)
+        {
+            string connectionId = Context.ConnectionId;
+            if (!Users.TryGetValue(connectionId, out UserInfo UserInfo))
+            {
+                UserInfo userInfo = new UserInfo();
+                userInfo.attUID = attUID;
+                userInfo.agentName = agentName;
+                userInfo.locationCode = locationCode;
+                userInfo.smpSessionId = smpSessionId;
+                Users.Add(connectionId, userInfo);
+            }
+        }
+
+        // Indicates that the SASHA session has started
+        public void StartSASHAFlow(string skillGroup, string nodeName)
         {
             string connectionId = Context.ConnectionId;
             Users.TryGetValue(connectionId, out UserInfo UserInfo);
-            string userName = UserInfo.UserName;
-            string motiveSessionId = KeyGenerator.GetUniqueKey(15);
-            string flowStartTime = DateTime.UtcNow.ToString("o");
-            string nodeName = KeyGenerator.GetUniqueKey(5);
+            string attUID = UserInfo.attUID;
+            string agentName = UserInfo.agentName;
+            string locationCode = UserInfo.locationCode;
+            string smpSessionId = UserInfo.smpSessionId;
+            string SessionStartTime = DateTime.UtcNow.ToString("o");
             string nodeStartTime = DateTime.UtcNow.ToString("o");
-            UserInfo.motiveSessionId = motiveSessionId;
-            UserInfo.flowStartTime = flowStartTime;
+            UserInfo.skillGroup = skillGroup;
+            UserInfo.sessionStartTime = SessionStartTime;
             UserInfo.nodeName = nodeName;
             UserInfo.nodeStartTime = nodeStartTime;
             Users[connectionId] = UserInfo;
-            AddSASHAConnection(connectionId, userName, motiveSessionId, flowStartTime, nodeName, nodeStartTime);
+            AddSASHAFlow(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, SessionStartTime, nodeName, nodeStartTime);
         }
 
-        // Add the row to the displayed table
-        public void AddSASHAConnection(string connectionId, string userName, string motiveSessionId, string flowStartTime, string nodeName, string nodeStartTime)
+        // Request all clients to add an active SASHA flow to the monitor display
+        public void AddSASHAFlow(string connectionId, string attUID, string agentName, string locationCode, string smpSessionId, string skillGroup, string flowStartTime, string nodeName, string nodeStartTime)
         {
-            Clients.All.addSASHAConnection(connectionId, userName, motiveSessionId, flowStartTime, nodeName, nodeStartTime);
+            Clients.All.addSASHAConnection(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, flowStartTime, nodeName, nodeStartTime);
         }
 
         // Removes the row from the displayed table
@@ -93,51 +110,68 @@ namespace SignalR.Server.Web
         }
 
         // Reload the table
-        public void RefreshSASHAConnections()
+        public void RefreshSASHAConnections(string active)
         {
+//            ShowActivity("all", "Refreshing SASHA Connections");
             foreach (KeyValuePair<string, UserInfo> User in Users)
             {
-                if (User.Value.flowStartTime != null)
+                if (User.Value.sessionStartTime != null)
                 {
                     string connectionId = User.Key;
-                    string userName = User.Value.UserName;
-                    string motiveSessionId = User.Value.motiveSessionId;
-                    string flowStartTime = User.Value.flowStartTime;
+                    string attUID = User.Value.attUID;
+                    string agentName = User.Value.agentName;
+                    string locationCode = User.Value.locationCode;
+                    string smpSessionId = User.Value.smpSessionId;
+                    string skillGroup = User.Value.skillGroup;
+                    string sessionStartTime = User.Value.sessionStartTime;
                     string nodeName = User.Value.nodeName;
                     string nodeStartTime = User.Value.nodeStartTime;
-                    Clients.Caller.addSASHAConnection(connectionId, userName, motiveSessionId, flowStartTime, nodeName, nodeStartTime);
+                    Clients.Caller.addSASHAConnection(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, nodeName, nodeStartTime);
                 }
             }
+            if (active != "")
+            {
+                Clients.Caller.resetActiveTab(active);
+            }
+        }
+
+        public void UpdateNodeInfo(string nodeName)
+        {
+            string connectionId = Context.ConnectionId;
+            string nodeStartTime = DateTime.UtcNow.ToString("o");
+            Clients.All.updateNodeInfo(connectionId, nodeName, nodeStartTime);
         }
 
         public override Task OnConnected()
         {
-            string userName;
-            string connectionId = Context.ConnectionId;
-            UserInfo userInfo = new UserInfo();
-            Users.Add(connectionId, userInfo);
-            if (Context.User.Identity.IsAuthenticated)
-            {
-                userName = Context.User.Identity.Name.GetUserName().Trim().ToLower();
-            } else
-            {
-                userName = KeyGenerator.GetUniqueKey(10);
-            }
-            userInfo.UserName = userName;
-            Users[connectionId] = userInfo;
-            ShowActivity("caller", "Welcome " + userName);
-            ShowActivity("others", "Connection: " + userName);
-            Clients.Caller.updateUserName(userName); // Update UserName 
+//            string userName;
+//            string connectionId = Context.ConnectionId;
+//            UserInfo userInfo = new UserInfo();
+//            Users.Add(connectionId, userInfo);
+//            if (Context.User.Identity.IsAuthenticated)
+//            {
+//                userName = Context.User.Identity.Name.GetUserName().Trim().ToLower();
+//            } else
+//            {
+//                userName = KeyGenerator.GetUniqueKey(10);
+//            }
+//            userInfo.attUID = userName;
+//            Users[connectionId] = userInfo;
+//            ShowActivity("caller", "Welcome " + userName);
+//            ShowActivity("others", "Connection: " + userName);
+//            Clients.Caller.updateUserName(userName); // Update UserName 
             return base.OnConnected();
         }
 
         public override Task OnDisconnected(bool stopCalled)
         {
             string connectionId = Context.ConnectionId;
-            string userName = GetUserNameByConnectionId(connectionId);
-            ShowActivity("others", "Disconnection: " + userName);
-            Clients.All.removeSASHAConnection(connectionId);
-            Users.Remove(connectionId);
+            if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
+            {
+                string skillGroup = UserInfo.skillGroup;
+                Clients.All.removeSASHAConnection(connectionId, skillGroup);
+                Users.Remove(connectionId);
+            }
             return base.OnDisconnected(stopCalled);
         }
 

@@ -7,9 +7,12 @@ namespace SignalR.Server.Web
 { 
     public class UserInfo
     {
-        public string UserName;
-        public string motiveSessionId;
-        public string flowStartTime;
+        public string attUID;
+        public string agentName;
+        public string locationCode;
+        public string smpSessionId;
+        public string skillGroup;
+        public string sessionStartTime;
         public string nodeName;
         public string nodeStartTime;
 
