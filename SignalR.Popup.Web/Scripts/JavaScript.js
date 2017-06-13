@@ -59,6 +59,7 @@
             layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
             format: 'yowdhMS'
         });
+        document.title = "SAMS - " + agentName + " (" + attUID + ")";
         myHub.server.pullSASHAScreenshot(connectionId);
     };
 
@@ -75,14 +76,12 @@
         screenshotTime = toLocalTime(screenshotTime);
         $('div#screenshotInfo').html("SCREENSHOT TAKEN: " + screenshotTime);
         setTimeout(function () {
-            vars = getURLVars();
-            connectionId = vars.id;
-            myHub.server.pullSASHAScreenshot(connectionId);
+            myHub.server.pullSASHAScreenshot(window.SASHAClientId);
         },20000)
     };
 
     myHub.client.updateNodeInfo = function (connectionId, flowName, nodeName, nodeStartTime) {
-        if (connectionId === id) {
+        if (connectionId === window.SASHAClientId) {
             nodeStartTimestamp = new Date(nodeStartTime);
             nodeStartTime = toLocalTime(nodeStartTime);
             $('div#stepDuration_' + connectionId).countdown('destroy');
@@ -103,6 +102,7 @@
         .done(function () {
             vars = getURLVars();
             connectionId = vars.id;
+            window.SASHAClientId = connectionId;
             myHub.server.requestClientDetail(connectionId);
         });
 

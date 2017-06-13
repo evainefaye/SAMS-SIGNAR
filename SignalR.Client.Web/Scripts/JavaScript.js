@@ -1,6 +1,6 @@
 ﻿$(document).ready(function () {
 
-
+    document.title = "SAMS - SASHA ACTIVE MONITORING SYSTEM";
     windowManager = new Object();
     // Set the location of the HUB based on URL
     switch (window.location.hostname.toLowerCase()) {
