@@ -19,16 +19,23 @@
 
 table {
     border-collapse: collapse;
+    table-layout: fixed;
+    white-space: nowrap;
+    width: 90%;
 }
 
 table th {
     border: solid 2px #000;
     padding: 1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 table td {
     border: solid 1px #000;
     padding: .25em;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 table.center {
@@ -39,4 +46,28 @@ table.center {
 img.screenshot {
     display: block;
     margin: auto;
+}
+
+table tr th:nth-child(1) {
+    width: 60px;
+}
+
+table tr th:nth-child(2) {
+    width: 185px;
+}
+
+table tr th:nth-child(3) {
+    width: 100px;
+}
+
+table tr th:nth-child(4) {
+    width: 90px;
+}
+
+table tr th:nth-child(6) {
+    width: 85px;
+}
+
+table tr th:nth-child(7) {
+    width: 90px;
 }

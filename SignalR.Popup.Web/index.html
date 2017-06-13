@@ -7,26 +7,20 @@
     <!-- I installed the following Add on to Enable NTLM logins Easier
         https://addons.mozilla.org/en-Us/firefox/addon/integrated-auth-for-firefox/
     -->
-
-
     <!-- Begin Add SignalR -->
 
     <script src="Scripts/jquery-3.1.1.min.js"></script>
     <script src="Scripts/jquery.signalR-2.2.2.min.js"></script>
 
     <!-- Location of Hubs Proxy -->
-
     <!--
         Location of various Hubs Files, change this based on where your publishing to -->
-
     <!-- Running From Hawkbane.biz (Authentication Does not work)
         <script src="http://server.sams.hawkbane.biz/signalr/hubs/"></script>
     -->
-
     <!-- Running From Laptop (Authentication Works here)
         <script src="http://laptop/server/signalr/hubs/"></script>
     -->
-
     <!-- Running From VS (Authentication Does not work)
         <script src="http://localhost:49608/signalr/hubs/"></script>
     -->
@@ -34,9 +28,7 @@
     <script src="http://server.sams.hawkbane.biz/signalr/hubs/"></script>
 
     <!-- End Add SignalR -->
-
     <!-- Begin add Bootstrap -->
-
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -47,7 +39,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <!-- End Add Bootstrap -->
-
     <!-- Begin add countdown -->
     <script src="/Scripts/jquery.plugin.min.js"></script>
     <script src="/Scripts/jquery.countdown.min.js"></script>
@@ -58,23 +49,12 @@
     <script src="Scripts/JavaScript.js"></script>
 </head>
 <body>
-    <div class="initializationScreen">
-        INITIALIZING....
+    <div id="header"></div>
+    <br />
+    <div>
+        <ul id="activity"></ul>
     </div>
-    <div class="mainScreen">
-        <div>User Name: 
-            <span id="CurrentUserName"></span>
-            <button class="btn-primary" id="RefreshSASHAConnections">Refresh SASHA Connections</button>
-        </div>
-        <br />
-        <ul id="skillgroupsTab" class="nav nav-tabs">
-        </ul>
-        <div id="skillgroupsContent" class="tab-content">
-        </div>
-        <div>
-            <ul id="activity">
-            </ul>
-        </div>
-    </div>
+    <div id="screenshotInfo" class="center text-center">PENDING SCREENSHOT</div>
+    <img class="screenshot" id="SASHAScreenshot" />
 </body>
 </html>

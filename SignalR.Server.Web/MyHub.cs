@@ -79,7 +79,7 @@ namespace SignalR.Server.Web
         }
 
         // Indicates that the SASHA session has started
-        public void StartSASHAFlow(string skillGroup, string nodeName)
+        public void StartSASHAFlow(string skillGroup, string flowName, string nodeName)
         {
             string connectionId = Context.ConnectionId;
             Users.TryGetValue(connectionId, out UserInfo UserInfo);
@@ -91,16 +91,17 @@ namespace SignalR.Server.Web
             string nodeStartTime = DateTime.UtcNow.ToString("o");
             UserInfo.skillGroup = skillGroup;
             UserInfo.sessionStartTime = SessionStartTime;
+            UserInfo.flowName = flowName;
             UserInfo.nodeName = nodeName;
             UserInfo.nodeStartTime = nodeStartTime;
             Users[connectionId] = UserInfo;
-            AddSASHAFlow(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, SessionStartTime, nodeName, nodeStartTime);
+            AddSASHAConnection(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, SessionStartTime, flowName, nodeName, nodeStartTime);
         }
 
         // Request all clients to add an active SASHA flow to the monitor display
-        public void AddSASHAFlow(string connectionId, string attUID, string agentName, string locationCode, string smpSessionId, string skillGroup, string flowStartTime, string nodeName, string nodeStartTime)
+        public void AddSASHAConnection(string connectionId, string attUID, string agentName, string locationCode, string smpSessionId, string skillGroup, string flowStartTime, string flowName, string nodeName, string nodeStartTime)
         {
-            Clients.All.addSASHAConnection(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, flowStartTime, nodeName, nodeStartTime);
+            Clients.All.addSASHAConnection(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, flowStartTime, flowName, nodeName, nodeStartTime);
         }
 
         // Removes the row from the displayed table
@@ -124,9 +125,10 @@ namespace SignalR.Server.Web
                     string smpSessionId = User.Value.smpSessionId;
                     string skillGroup = User.Value.skillGroup;
                     string sessionStartTime = User.Value.sessionStartTime;
+                    string flowName = User.Value.flowName;
                     string nodeName = User.Value.nodeName;
                     string nodeStartTime = User.Value.nodeStartTime;
-                    Clients.Caller.addSASHAConnection(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, nodeName, nodeStartTime);
+                    Clients.Caller.addSASHAConnection(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime);
                 }
             }
             if (active != "")
@@ -135,11 +137,18 @@ namespace SignalR.Server.Web
             }
         }
 
-        public void UpdateNodeInfo(string nodeName)
+        public void UpdateNodeInfo(string flowName, string nodeName)
         {
             string connectionId = Context.ConnectionId;
             string nodeStartTime = DateTime.UtcNow.ToString("o");
-            Clients.All.updateNodeInfo(connectionId, nodeName, nodeStartTime);
+            if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
+            {
+                UserInfo.flowName = flowName;
+                UserInfo.nodeName = nodeName;
+                UserInfo.nodeStartTime = nodeStartTime;
+                Users[connectionId] = UserInfo;
+            }
+            Clients.All.updateNodeInfo(connectionId, flowName, nodeName, nodeStartTime);
         }
 
         public void PullSASHAScreenshot(string SASHAConnectionId)
@@ -152,6 +161,29 @@ namespace SignalR.Server.Web
         {
             string connectionId = Context.ConnectionId;
             Clients.Client(MonitorConnectionId).pushSASHAScreenshot(image);
+        }
+
+        public void RequestClientDetail(string connectionId)
+        {
+//            string connectionId = Context.ConnectionId;
+            if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
+            {
+                string attUID = UserInfo.attUID;
+                string agentName = UserInfo.agentName;
+                string locationCode = UserInfo.locationCode;
+                string smpSessionId = UserInfo.smpSessionId;
+                string skillGroup = UserInfo.skillGroup;
+                string sessionStartTime = UserInfo.sessionStartTime;
+                string flowName = UserInfo.flowName;
+                string nodeName = UserInfo.nodeName;
+                string nodeStartTime = UserInfo.nodeStartTime;
+                Clients.Caller.setClientDetail(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime);
+            }
+            else
+            {
+                Clients.Caller.closeWindow();
+            }
+
         }
 
         public override Task OnConnected()

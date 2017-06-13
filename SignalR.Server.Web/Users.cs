@@ -13,6 +13,7 @@ namespace SignalR.Server.Web
         public string smpSessionId;
         public string skillGroup;
         public string sessionStartTime;
+        public string flowName;
         public string nodeName;
         public string nodeStartTime;
 

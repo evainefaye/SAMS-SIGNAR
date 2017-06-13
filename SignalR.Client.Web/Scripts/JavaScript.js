@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
 
 
+    windowManager = new Object();
     // Set the location of the HUB based on URL
     switch (window.location.hostname.toLowerCase()) {
         case "laptop":
@@ -12,10 +13,21 @@
         case "client.sams.hawkbane.biz":
             $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
             break;
+        case "popup.sams.hawkbane.biz":
+            $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
+            break;
     }
 
     disconnectNotified = false;
     myHub = $.connection.myHub;
+
+    // Remove any detail windows when main window is closed
+    $(window).on('unload', function () {
+        $.each(windowManager, function (key) {
+            windowManager[key].close();
+            delete windowManager[key];
+        });
+    });
 
     // Default Client showActivity Method
     myHub.client.showActivity = function (timestamp, text) {
@@ -24,10 +36,10 @@
     };
 
     // Add row to SASHA Users Information
-    myHub.client.addSASHAConnection = function (connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, nodeName, nodeStartTime) {
+    myHub.client.addSASHAConnection = function (connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime) {
 
         // Begin add tab code here
-        if ($('ul#skillgroupsTab li#' + skillGroup).length == 0) {
+        if ($('ul#skillgroupsTab li#' + skillGroup).length === 0) {
             // Skill Group tab did not exist so we need to add one
             row = '<li id="' + skillGroup + '"><a class="nav-link"  data-toggle="tab" href=#skillgroupsContent_' + skillGroup + '>' + skillGroup + '</a></li>';
             $('ul#skillgroupsTab').append(row);
@@ -35,13 +47,13 @@
                 '<table class="center">' +
                 '<thead>' +
                 '<tr>' +
-                '<th class="text-center">ATT UID</th>' +
+                '<th class="text-center">ATT<br />UID</th>' +
                 '<th class="text-center">Agent Name</th>' +
-                '<th class="text-center">Session<BR />Start Time</th>' +
-                '<th class="text-center">Session Duration</th>' +
-                '<th class="text-center">Flow<BR />Node Name</th>' +
-                '<th class="text-center">Node<BR />Start Time</th>' +
-                '<th class="text-center">Node<BR />Step Duration</th>' +
+                '<th class="text-center">Session<br />Start Time</th>' +
+                '<th class="text-center">Session<br />Duration</th>' +
+                '<th class="text-center">Flow / Node Name</th>' +
+                '<th class="text-center">Node<br />Start<br />Time</th>' +
+                '<th class="text-center">Node<br />Duration</th>' +
                 '</tr>' +
                 '</thead>' +
                 '<tbody >' +
@@ -53,7 +65,7 @@
 
         // End Add tab code
 
-        if ($('div#skillgroupsContent_' + skillGroup).find('table tbody tr#' + connectionId).length == 0) {
+        if ($('div#skillgroupsContent_' + skillGroup).find('table tbody tr#' + connectionId).length === 0) {
             sessionStartTimestamp = new Date(sessionStartTime);
             sessionStartTime = toLocalTime(sessionStartTime);
             nodeStartTimestamp = new Date(nodeStartTime);
@@ -63,7 +75,7 @@
                 + '<td class="text-left">' + agentName + '</td>'
                 + '<td class="text-center">' + sessionStartTime + '</td>'
                 + '<td class="text-right"><div id="sessionDuration_' + connectionId + '"></div></td>'
-                + '<td class="text-left" id="nodeName_' + connectionId + '">' + nodeName + '</td>'
+                + '<td class="text-left" id="nodeName_' + connectionId + '">' + flowName + '<br />' + nodeName + '</td>'
                 + '<td class="text-center" id="nodeStartTime_' + connectionId + '">' + nodeStartTime + '</td>'
                 + '<td class="text-right"><div id="stepDuration_' + connectionId + '"></div></td>'
                 + '</tr>';
@@ -80,15 +92,17 @@
                 layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
                 format: 'yowdhMS'
             });
-            if ($('#skillgroupsTab.active').length == 0) {
+            if ($('#skillgroupsTab.active').length === 0) {
                 $('#skillgroupsTab a:first').click();
             }
         }
         // Setup the table click 
-        $('table tr').off('click').on('click', function () {
+        $('table tr').off('dblclick').on('dblclick', function () {
             id = $(this).attr('id');
-            $('img#SASHAScreenshot').attr('src', '/Images/wait.gif');
-            myHub.server.pullSASHAScreenshot(id);
+            //            $('img#SASHAScreenshot').attr('src', '/Images/wait.gif');
+            //            myHub.server.pullSASHAScreenshot(id);
+            winName = "window_" + id;
+            windowManager[winName] = window.open("http://popup.sams.hawkbane.biz?id=" + id, winName);
         });
     };
 
@@ -96,24 +110,28 @@
     myHub.client.pushSASHAScreenshot = function (img) {
         $('img#SASHAScreenshot').attr('src', img);
         $('img#SASHAScreenshot').show();
-    }
+    };
 
     myHub.client.removeSASHAConnection = function (connectionId, skillGroup) {
         $('div#sessionDuration_' + connectionId).countdown('destroy');
         $('div#stepDuration_' + connectionId).countdown('destroy');
         $('div#skillgroupsContent_' + skillGroup).find('table tbody tr#' + connectionId).remove();
-//        if ($('table#sashaConnections_' + skillGroup + ' tbody tr').length == 0) {
-//            $('#skillgroupsTab li#' + skillGroup).remove();
-//            $('#skillgroupsContent_' + skillGroup).remove();
-//        }
+        winName = "window_" + connectionId;
+        if (typeof windowManager[winName] === "object") {
+            windowManager[winName].close();
+            delete windowManager[winName];
+        }
+        //        if ($('table#sashaConnections_' + skillGroup + ' tbody tr').length == 0) {
+        //            $('#skillgroupsTab li#' + skillGroup).remove();
+        //            $('#skillgroupsContent_' + skillGroup).remove();
+        //        }
     };
 
-    myHub.client.updateNodeInfo = function (connectionId, nodeName, nodeStartTime)
-    {
+    myHub.client.updateNodeInfo = function (connectionId, flowName, nodeName, nodeStartTime) {
         nodeStartTimestamp = new Date(nodeStartTime);
         nodeStartTime = toLocalTime(nodeStartTime);
         $('div#stepDuration_' + connectionId).countdown('destroy');
-        $('td#nodeName_' + connectionId).html(nodeName);
+        $('td#nodeName_' + connectionId).html(flowName + '<br />' + nodeName);
         $('td#nodeStartTime_' + connectionId).html(nodeStartTime);
         $('div#stepDuration_' + connectionId).countdown({
             since: nodeStartTimestamp,
@@ -121,15 +139,15 @@
             layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
             format: 'yowdhMS'
         });
-    }
+    };
 
     myHub.client.resetActiveTab = function (active) {
-//        setTimeout(function () {
-            $('li#' + active + ' a:first').click();
-//            $('div.initializationScreen').hide();
-//            $('div.mainScreen').show();
-//            console.log('li#' + active + ' a:first');
-//        }, 3000);
+        //        setTimeout(function () {
+        $('li#' + active + ' a:first').click();
+        //            $('div.initializationScreen').hide();
+        //            $('div.mainScreen').show();
+        //            console.log('li#' + active + ' a:first');
+        //        }, 3000);
     };
 
 
@@ -156,13 +174,17 @@
 
     // Refresh SASHA Connections Display
     $('button#RefreshSASHAConnections').off('click').on('click', function () {
-//        $('div.initializationScreen').html('REFRESHING CONNECTION INFORMATION...');
-//        $('div.initializationScreen').show();
-//        $('div.mainScreen').hide();
-        active = $('li.active').attr('id')
+        //        $('div.initializationScreen').html('REFRESHING CONNECTION INFORMATION...');
+        //        $('div.initializationScreen').show();
+        //        $('div.mainScreen').hide();
+        active = $('li.active').attr('id');
         $('.is-countdown').countdown('destroy');
         $('ul#skillgroupsTab').empty();
         $('div#skillgroupsContent').empty();
+        $.each(windowManager, function (key) {
+            windowManager[key].close();
+            delete windowManager[key];
+        });
         myHub.server.refreshSASHAConnections(active);
     });
 });

@@ -1,0 +1,29 @@
+﻿body {
+    font-family: Arial;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    }
+
+.screenshot {
+    display: block;
+    margin: auto;
+    width: 950px;
+    max-width: 950px;
+}
+
+.data {
+    font-weight: bold;
+}
+
+.noborder, .noborder tr, .noborder th, .noborder.td {
+    border-collapse: collapse;
+    border: none;
+    width: 100%;
+}
