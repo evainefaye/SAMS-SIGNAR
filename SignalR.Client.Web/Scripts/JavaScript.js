@@ -26,7 +26,6 @@
     // Add row to SASHA Users Information
     myHub.client.addSASHAConnection = function (connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, nodeName, nodeStartTime) {
 
-
         // Begin add tab code here
         if ($('ul#skillgroupsTab li#' + skillGroup).length == 0) {
             // Skill Group tab did not exist so we need to add one
@@ -85,7 +84,19 @@
                 $('#skillgroupsTab a:first').click();
             }
         }
+        // Setup the table click 
+        $('table tr').off('click').on('click', function () {
+            id = $(this).attr('id');
+            $('img#SASHAScreenshot').attr('src', '/Images/wait.gif');
+            myHub.server.pullSASHAScreenshot(id);
+        });
     };
+
+    // Display SASHA screenshot
+    myHub.client.pushSASHAScreenshot = function (img) {
+        $('img#SASHAScreenshot').attr('src', img);
+        $('img#SASHAScreenshot').show();
+    }
 
     myHub.client.removeSASHAConnection = function (connectionId, skillGroup) {
         $('div#sessionDuration_' + connectionId).countdown('destroy');
@@ -120,6 +131,7 @@
 //            console.log('li#' + active + ' a:first');
 //        }, 3000);
     };
+
 
     $.connection.hub.start()
         .done(setTimeout(showMainScreen, 2000));

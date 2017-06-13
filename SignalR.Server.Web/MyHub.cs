@@ -142,6 +142,18 @@ namespace SignalR.Server.Web
             Clients.All.updateNodeInfo(connectionId, nodeName, nodeStartTime);
         }
 
+        public void PullSASHAScreenshot(string SASHAConnectionId)
+        {
+            string connectionId = Context.ConnectionId;
+            Clients.Client(SASHAConnectionId).requestSASHAScreenshot(connectionId);
+        }
+
+        public void ReceiveSASHAScreenshot(string MonitorConnectionId, string image)
+        {
+            string connectionId = Context.ConnectionId;
+            Clients.Client(MonitorConnectionId).pushSASHAScreenshot(image);
+        }
+
         public override Task OnConnected()
         {
 //            string userName;
