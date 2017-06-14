@@ -44,6 +44,12 @@
     <script src="/Scripts/jquery.countdown.min.js"></script>
     <link rel="stylesheet" href="Stylesheets/jquery.countdown.css" />
     <!-- End add countdown -->
+    <!-- Begin add Motive Dictionary -->
+    <link rel="stylesheet" type="text/css" href="/Stylesheets/treeview.css" />
+    <script src="/Scripts/jquery.cookie.js"></script>
+    <script src="/Scripts/jquery.treeview.js"></script>
+    <script src="/Scripts/dictionary.js"></script>
+    <!-- End Motive Dictionary -->
 
     <link rel="stylesheet" href="Stylesheets/StyleSheet.css" />
     <script src="Scripts/JavaScript.js"></script>
@@ -51,10 +57,66 @@
 <body>
     <div id="header"></div>
     <br />
-    <div>
-        <ul id="activity"></ul>
+    <div style="white-space: nowrap">
+        <div style="display:inline-block">
+            <div id="screenshotInfo" class="center text-center">PENDING SCREENSHOT</div>
+            <img class="screenshot" id="SASHAScreenshot" />
+        </div>
+        <div style="display:inline-block">
+            <div id="dictionaryInfo" class="center text-center">PENDING DICTIONARY</div>
+            <div class="dictionary-area treeview-black"></div>
+        </div>
     </div>
-    <div id="screenshotInfo" class="center text-center">PENDING SCREENSHOT</div>
-    <img class="screenshot" id="SASHAScreenshot" />
+ 
+
+
+
+
+
+
+    <div class="ui-layout-north sashaConnections"></div>
+    <div class="ui-layout-center">
+        <div class="ui-layout-north">
+            <div style="float:right">
+                <button id="dictionary-button" onclick="refreshDictionary();"><img src="/css/images/arrow_refresh.png" alt="Refresh Dictionary" /></button>
+            </div>
+            <div id="top-info">
+                <table cellpadding="0" cellspacing="5">
+                    <tr>
+                        <td id="capt_dict">
+                            <input type="button" id="dictionary-capture" value="Capture Dictionary" />
+                        </td>
+                        <td>
+                            <input type="text" size="30" id="dict_capture_name" placeholder="ENTER NAME TO SAVE DICTIONARY" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Selected&nbsp;Expression: </label>
+                        </td>
+                        <td>
+                            <input type="text" readonly size="70" id="expression" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="ui-layout-center">
+            <h2>DICTIONARY TREE</h2>
+            <div class="dictionary-area treeview-black" style="clear:both"></div>
+        </div>
+        <div class="ui-layout-south">
+            <h2>EXPRESSION CONSOLE</h2>
+            <input type="text" size="70" id="expressionConsole" placeholder="ENTER EXPRESSION TO EVALUATE" />
+            <input type="submit" id="expreval" value="Evaluate Expression" onclick="submitExpression(); return false;" />
+        </div>
+    </div>
+
+
+
+
+
+
+
 </body>
 </html>

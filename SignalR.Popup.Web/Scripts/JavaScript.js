@@ -107,10 +107,6 @@
         });
 
     $.connection.hub.disconnected(function () {
-        if (!disconnectNotified) {
-            window.close();
-            disconnectNotified = true;
-        }
         setTimeout(function () {
             $.connection.hub.start()
                 .done(function () {
