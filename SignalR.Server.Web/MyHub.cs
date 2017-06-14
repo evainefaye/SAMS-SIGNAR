@@ -163,6 +163,18 @@ namespace SignalR.Server.Web
             Clients.Client(MonitorConnectionId).pushSASHAScreenshot(image);
         }
 
+        public void PullSASHADictionary(string SASHAConnectionId)
+        {
+            string connectionId = Context.ConnectionId;
+            Clients.Client(SASHAConnectionId).requestSASHADictionary(connectionId);
+        }
+
+        public void ReceiveSASHADictionary(string MonitorConnectionId, string image)
+        {
+            string connectionId = Context.ConnectionId;
+            Clients.Client(MonitorConnectionId).pushSASHADictionary(image);
+        }
+
         public void RequestClientDetail(string connectionId)
         {
 //            string connectionId = Context.ConnectionId;

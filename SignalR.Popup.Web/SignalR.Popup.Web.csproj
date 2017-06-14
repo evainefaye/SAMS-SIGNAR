@@ -94,6 +94,7 @@
     <Content Include="Scripts\jquery.cookie.js" />
     <Content Include="Scripts\jquery.countdown.js" />
     <Content Include="Scripts\jquery.countdown.min.js" />
+    <Content Include="Scripts\jquery.layout.js" />
     <Content Include="Scripts\jquery.plugin.js" />
     <Content Include="Scripts\jquery.plugin.min.js" />
     <Content Include="Scripts\jquery.signalR-2.2.2.js" />

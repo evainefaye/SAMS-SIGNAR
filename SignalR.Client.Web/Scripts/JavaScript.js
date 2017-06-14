@@ -37,7 +37,9 @@
 
     // Add row to SASHA Users Information
     myHub.client.addSASHAConnection = function (connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime) {
-
+        if (skillGroup == null) {
+            skillGroup == "UNKNOWN";
+        }
         // Begin add tab code here
         if ($('ul#skillgroupsTab li#' + skillGroup).length === 0) {
             // Skill Group tab did not exist so we need to add one
@@ -61,6 +63,7 @@
                 '</table>' +
                 '</div>';
             $('div#skillgroupsContent').append(row);
+            sortTabs('ul#skillgroupsTab');
         }
 
         // End Add tab code
@@ -211,4 +214,18 @@ showMainScreen = function () {
     myHub.server.refreshSASHAConnections("");
     $('div.initializationScreen').hide();
     $('div.mainScreen').show();
+};
+
+sortTabs = function (element) {
+    var myList = $(element);
+    var listItems = myList.children('li').get();
+    listItems.sort(function (a, b) {
+        var compA = $(a).text().toUpperCase();
+        var compB = $(b).text().toUpperCase();
+        return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+    });
+    myList.empty();
+    $.each(listItems, function (idx, itm) {
+        myList.append(itm);
+    });
 };
