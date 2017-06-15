@@ -12,6 +12,7 @@ namespace SignalR.Server.Web
     {
 
         private static Dictionary<string, UserInfo> Users = new Dictionary<string, UserInfo>();
+        public static string serverStarted = DateTime.UtcNow.ToString("o");
 
         // Default Server ShowActivity Method
         public void ShowActivity(string target, string text)
@@ -76,6 +77,11 @@ namespace SignalR.Server.Web
                 userInfo.smpSessionId = smpSessionId;
                 Users.Add(connectionId, userInfo);
             }
+        }
+
+        public void RequestServerStartTime()
+        {
+            Clients.Caller.showServerStartTime(serverStarted);
         }
 
         // Indicates that the SASHA session has started
@@ -173,6 +179,23 @@ namespace SignalR.Server.Web
         {
             string connectionId = Context.ConnectionId;
             Clients.Client(MonitorConnectionId).pushSASHADictionary(image);
+        }
+
+        public void RequestStalledSession(string connectionId)
+        {
+            if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
+            {
+                string attUID = UserInfo.attUID;
+                string agentName = UserInfo.agentName;
+                string locationCode = UserInfo.locationCode;
+                string smpSessionId = UserInfo.smpSessionId;
+                string skillGroup = UserInfo.skillGroup;
+                string sessionStartTime = UserInfo.sessionStartTime;
+                string flowName = UserInfo.flowName;
+                string nodeName = UserInfo.nodeName;
+                string nodeStartTime = UserInfo.nodeStartTime;
+                Clients.All.receiveStalledSession(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime);
+            }
         }
 
         public void RequestClientDetail(string connectionId)

@@ -32,6 +32,9 @@
         sessionStartTime = toLocalTime(sessionStartTime);
         nodeStartTimestamp = new Date(nodeStartTime);
         nodeStartTime = toLocalTime(nodeStartTime);
+        if (skillGroup === null || skillGroup == "null" || skillGroup == "") {
+            skillGroup = "UNKNOWN";
+        }
         row = "<table class='noborder center'>" +
             "<tbody>" +
             "<tr><td class='head text-right'>Agent Name: </td><td class='data'>" + agentName + " (" + attUID + ")</td>" +
@@ -77,7 +80,7 @@
         $('div#screenshotInfo').html("SCREENSHOT TAKEN: " + screenshotTime);
         setTimeout(function () {
             myHub.server.pullSASHAScreenshot(window.SASHAClientId);
-        },20000)
+        }, 20000);
     };
 
     myHub.client.updateNodeInfo = function (connectionId, flowName, nodeName, nodeStartTime) {
