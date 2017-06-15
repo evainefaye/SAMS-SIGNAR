@@ -42,14 +42,6 @@ table td {
     text-overflow: ellipsis;
 }
 
-.stripped {
-    background-color: #0c2577;
-}
-
-.hover {
-    background-color: #0574ac;
-}
-
 .center {
     margin-left: auto;
     margin-right: auto;
@@ -82,6 +74,13 @@ table tr .nodeDuration {
 
 table tr .skillGroup {
     width: 100px;
+}
+
+table tr .flowName {
+    width: 275px;
+}
+table tr .nodeName {
+    width: 275px;
 }
 
 .nav-tabs {

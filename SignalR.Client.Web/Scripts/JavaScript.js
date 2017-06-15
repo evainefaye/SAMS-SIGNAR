@@ -55,17 +55,17 @@
             row = '<li id="' + skillGroup + '"><a class="nav-link"  data-toggle="tab" href="#skillgroupsContent_' + skillGroup + '">' + skillGroup + '</a></li>';
             $('ul#skillgroupsTab').append(row);
             row = '<div id="skillgroupsContent_' + skillGroup + '" class="tab-pane">' +
-                '<table class="center">' +
+                '<table class="center hover-highlight serviceline">' +
                 '<thead>' +
                 '<tr>' +
                 '<th class="text-center attUID">ATT<br />UID</th>' +
                 '<th class="text-center agentName">AGENT NAME</th>' +
-                '<th class="text-center sessionStartTime">SESSION<br />START TIME</th>' +
+                '<th class="text-center sessionStartTime" >SESSION<br />START TIME</th>' +
                 '<th class="text-center sessionDuration">SESSION<br />DURATION</th>' +
-                '<th class="text-center nodeStartTime">NODE<br />START<br />TIME</th>' +
-                '<th class="text-center nodeDuration">NODE<br />DURATION</th>' +
-                '<th class="text-center flowName">FLOW NAME</th>' +
-                '<th class="text-center nodeName">NODE NAME</th>' +
+                '<th class="text-center nodeStartTime sorter-false">NODE<br />START<br />TIME</th>' +
+                '<th class="text-center nodeDuration sorter-false">NODE<br />DURATION</th>' +
+                '<th class="text-center flowName sorter-false">FLOW NAME</th>' +
+                '<th class="text-center nodeName sorter-false">NODE NAME</th>' +
                 '</tr>' +
                 '</thead>' +
                 '<tbody >' +
@@ -74,6 +74,16 @@
                 '</div>';
             $('div#skillgroupsContent').append(row);
             sortTabs('ul#skillgroupsTab');
+            $('div#skillgroupsContent_' + skillGroup + ' table').tablesorter({
+                theme: "custom",
+                sortList: [[3, 0]],
+                sortReset: true,
+                widgets: ["zebra"]
+            });
+            $('a[data-toggle="tab"]').off('shown.bs.tab.resort').on('shown.tab.bs.resort', function(e) { 
+                var target = $(e.target).attr('href');
+                $('div' + target).find('table').trigger('update');
+            });
         }
 
         // End Add tab code
@@ -93,7 +103,20 @@
                 + '<td class="text-left" flowNameId="flowName_' + connectionId + '">' + flowName + '</td>'
                 + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '">' + nodeName + '</td>'
                 + '</tr>';
-            $('div#skillgroupsContent_' + skillGroup + ' table ').find('tbody:last').append(row);
+            $('div#skillgroupsContent_' + skillGroup + ' table').find('tbody:last').append(row);
+            row = '<tr connectionId="' + connectionId + '">'
+                + '<td class="text-centers">' + attUID + '</td>'
+                + '<td class="text-left">' + agentName + '</td>'
+                + '<td class="text-center">' + sessionStartTime + '</td>'
+                + '<td class="text-right"><div class="session" sessionDurationId="sessionDuration_' + connectionId + '"></div></td>'
+                + '<td class="text-center" nodeStartTimeId="nodeStartTime_' + connectionId + '">' + nodeStartTime + '</td>'
+                + '<td class="text-right"><div class="node" nodeDurationId="nodeDuration_' + connectionId + '"></div></td>'
+                + '<td class="text-center">' + skillGroup + '</td>'
+                + '<td class="text-left" flowNameId="flowName_' + connectionId + '">' + flowName + '</td>'
+                + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '">' + nodeName + '</td>'
+                + '</tr>';
+
+            $('div#skillgroupsContent_ALLSESSIONS table').find('tbody:last').append(row);
             $('div[sessionDurationId="sessionDuration_' + connectionId + '"]').countdown({
                 since: sessionStartTimestamp,
                 compact: true,
@@ -113,25 +136,18 @@
 //            if ($('#skillgroupsTab.active').length === 0) {
 //                $('#skillgroupsTab a:first').click();
 //            }
+            $('div#skillgroupsContent_' + skillGroup).find('table').trigger('update');
+            $('div#skillgroupsContent_ALLSESSIONS').find('table').trigger('update');
+
         }
         // Setup the table click 
-        $('table tr').off('dblclick touch').on('dblclick touch', function () {
+        $('table tbody tr').off('dblclick touch').on('dblclick touch', function () {
             id = $(this).attr('connectionId');
             //            $('img#SASHAScreenshot').attr('src', '/Images/wait.gif');
             //            myHub.server.pullSASHAScreenshot(id);
             winName = "window_" + id;
             windowManager[winName] = window.open("/popup/index.html?id=" + id, winName);
         });
-        $('tbody tr').removeClass('stripped');
-        $('tbody tr:odd').addClass('stripped');
-        $('tbody tr').hover(
-            function () {
-                $(this).addClass('hover');
-            },
-            function () {
-                $(this).removeClass('hover');
-            }
-        );
     };
 
     // Display SASHA screenshot
@@ -187,13 +203,6 @@
 
 
 
-
-
-
-
-
-
-
     myHub.client.receiveStalledSession = function (connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime) {
         if ($('div#skillgroupsContent_STALLEDSESSIONS').find('table tbody tr[connectionId="' + connectionId + '"]').length === 0) {
             sessionStartTimestamp = new Date(sessionStartTime);
@@ -231,17 +240,8 @@
                 onTick: checkExtendedDuration,
                 tickInterval: 5
             });
+            $('div#skillgroupsContent_STALLEDSESSIONS').find('table').trigger('update');
         }
-        $('tbody tr').removeClass('stripped');
-        $('tbody tr:odd').addClass('stripped');
-        $('tbody tr').hover(
-            function () {
-                $(this).addClass('hover');
-            },
-            function () {
-                $(this).removeClass('hover');
-            }
-        );
     };
 
 
@@ -289,10 +289,10 @@
             windowManager[key].close();
             delete windowManager[key];
         });
-        addStalledTab();
+        addCustomTab();
         myHub.server.refreshSASHAConnections(active);
     });
-    addStalledTab();
+    addCustomTab();
 });
 
 toLocalTime = function (timestamp) {
@@ -369,22 +369,23 @@ checkExtendedDuration = function (periods) {
     }
 };
 
-addStalledTab = function () {
-    row = '<li class="pull-right" id="STALLEDSESSIONS"><a class="nav-link"  data-toggle="tab" href="#skillgroupsContent_STALLEDSESSIONS">STALLED SESSIONS</a></li>';
+addCustomTab = function () {
+
+    row = '<li class="pull-right" id="ALLSESSIONS"><a class="nav-link"  data-toggle="tab" href="#skillgroupsContent_ALLSESSIONS">ALL SESSIONS</a></li>';
     $('ul#skillgroupsTab').append(row);
-    row = '<div id="skillgroupsContent_STALLEDSESSIONS" class="tab-pane">' +
-        '<table class="center">' +
+    row = '<div id="skillgroupsContent_ALLSESSIONS" class="tab-pane">' +
+        '<table class="center groupable hover-highlight">' +
         '<thead>' +
         '<tr>' +
-        '<th class="text-center attUID">ATT<br />UID</th>' +
-        '<th class="text-center agentName">AGENT NAME</th>' +
-        '<th class="text-center sessionStartTime">SESSION<br />START TIME</th>' +
-        '<th class="text-center sessionDuration">SESSION<br />DURATION</th>' +
-        '<th class="text-center nodeStartTime">NODE<br />START<br />TIME</th>' +
-        '<th class="text-center nodeDuration">NODE<br />DURATION</th>' +
-        '<th class="text-center skillGroup">SKILL GROUP</th>' +
-        '<th class="text-center flowName">FLOW NAME</th>' +
-        '<th class="text-center nodeName">NODE NAME</th>' +
+        '<th class="text-center attUID group-letter">ATT<br />UID</th>' +
+        '<th class="text-center agentName group-text">AGENT NAME</th>' +
+        '<th class="text-center sessionStartTim sorter-false">SESSION<br />START TIME</th>' +
+        '<th class="text-center sessionDuration sorter-false">SESSION<br />DURATION</th>' +
+        '<th class="text-center nodeStartTime sorter-false">NODE<br />START<br />TIME</th>' +
+        '<th class="text-center nodeDuration sorter-false">NODE<br />DURATION</th>' +
+        '<th class="text-center skillGroup group-word">SKILL GROUP</th>' +
+        '<th class="text-center flowName sorter-false">FLOW NAME</th>' +
+        '<th class="text-center nodeName sorter-false">NODE NAME</th>' +
         '</tr>' +
         '</thead>' +
         '<tbody >' +
@@ -392,5 +393,58 @@ addStalledTab = function () {
         '</table>' +
         '</div>';
     $('div#skillgroupsContent').append(row);
-    $('.nav-tabs a[href="#skillgroupsContent_STALLEDSESSIONS"]').tab('show');
+    $('.nav-tabs a[href="#skillgroupsContent_ALLSESSIONS"]').tab('show');
+    $('#skillgroupsContent_ALLSESSIONS').find('table').tablesorter({
+        theme: "custom",
+        sortList: [[1,0],[6, 0]],
+        sortReset: true,
+        widgets: ["zebra", "group"],
+        widgetOptions: {
+            group_forceColumn: [6]
+        }
+    });
+    $('a[data-toggle="tab"]').off('shown.bs.tab.resort').on('shown.tab.bs.resort', function (e) {
+        var target = $(e.target).attr('href');
+        $('div' + target).find('table').trigger('update');
+    });
+
+
+
+
+    row = '<li class="pull-right" id="STALLEDSESSIONS"><a class="nav-link"  data-toggle="tab" href="#skillgroupsContent_STALLEDSESSIONS">STALLED SESSIONS</a></li>';
+    $('ul#skillgroupsTab').append(row);
+    row = '<div id="skillgroupsContent_STALLEDSESSIONS" class="tab-pane">' +
+        '<table class="center groupable hover-highlight">' +
+        '<thead>' +
+        '<tr>' +
+        '<th class="text-center attUID group-letter">ATT<br />UID</th>' +
+        '<th class="text-center agentName group-text">AGENT NAME</th>' +
+        '<th class="text-center sessionStartTim sorter-false">SESSION<br />START TIME</th>' +
+        '<th class="text-center sessionDuration sorter-false">SESSION<br />DURATION</th>' +
+        '<th class="text-center nodeStartTime sorter-false">NODE<br />START<br />TIME</th>' +
+        '<th class="text-center nodeDuration sorter-false">NODE<br />DURATION</th>' +
+        '<th class="text-center skillGroup group-word">SKILL GROUP</th>' +
+        '<th class="text-center flowName sorter-false">FLOW NAME</th>' +
+        '<th class="text-center nodeName sorter-false">NODE NAME</th>' +
+        '</tr>' +
+        '</thead>' +
+        '<tbody >' +
+        '</tbody>' +
+        '</table>' +
+        '</div>';
+    $('div#skillgroupsContent').append(row);
+//    $('.nav-tabs a[href="#skillgroupsContent_STALLEDSESSIONS"]').tab('show');
+    $('#skillgroupsContent_STALLEDSESSIONS').find('table').tablesorter({
+        theme: "custom",
+        sortList: [[3,0],[6, 0]],
+        sortReset: true,
+        widgets: ["zebra", "group"],
+        widgetOptions: {
+            group_forceColumn: [6]
+        }
+    });
+    $('a[data-toggle="tab"]').off('shown.bs.tab.resort').on('shown.tab.bs.resort', function (e) {
+        var target = $(e.target).attr('href');
+        $('div' + target).find('table').trigger('update');
+    });
 };
