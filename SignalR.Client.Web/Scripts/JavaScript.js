@@ -379,7 +379,7 @@ addCustomTab = function () {
         '<tr>' +
         '<th class="text-center attUID group-letter">ATT<br />UID</th>' +
         '<th class="text-center agentName group-text">AGENT NAME</th>' +
-        '<th class="text-center sessionStartTim sorter-false">SESSION<br />START TIME</th>' +
+        '<th class="text-center sessionStartTime sorter-false">SESSION<br />START TIME</th>' +
         '<th class="text-center sessionDuration sorter-false">SESSION<br />DURATION</th>' +
         '<th class="text-center nodeStartTime sorter-false">NODE<br />START<br />TIME</th>' +
         '<th class="text-center nodeDuration sorter-false">NODE<br />DURATION</th>' +
@@ -419,7 +419,7 @@ addCustomTab = function () {
         '<tr>' +
         '<th class="text-center attUID group-letter">ATT<br />UID</th>' +
         '<th class="text-center agentName group-text">AGENT NAME</th>' +
-        '<th class="text-center sessionStartTim sorter-false">SESSION<br />START TIME</th>' +
+        '<th class="text-center sessionStartTime sorter-false">SESSION<br />START TIME</th>' +
         '<th class="text-center sessionDuration sorter-false">SESSION<br />DURATION</th>' +
         '<th class="text-center nodeStartTime sorter-false">NODE<br />START<br />TIME</th>' +
         '<th class="text-center nodeDuration sorter-false">NODE<br />DURATION</th>' +
