@@ -10,8 +10,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.Client.Web", "Signa
 		{7905ACE4-EC9A-4190-82D7-7C1BB634B73C} = {7905ACE4-EC9A-4190-82D7-7C1BB634B73C}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.Popup.Web", "SignalR.Popup.Web\SignalR.Popup.Web.csproj", "{D9348D79-FFBF-4DB6-83E9-891BA91891CF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,10 +24,6 @@ Global
 		{B01217FB-7104-4F3A-9DD1-CFBE6499E267}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B01217FB-7104-4F3A-9DD1-CFBE6499E267}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B01217FB-7104-4F3A-9DD1-CFBE6499E267}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D9348D79-FFBF-4DB6-83E9-891BA91891CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D9348D79-FFBF-4DB6-83E9-891BA91891CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D9348D79-FFBF-4DB6-83E9-891BA91891CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D9348D79-FFBF-4DB6-83E9-891BA91891CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

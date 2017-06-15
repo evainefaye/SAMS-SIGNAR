@@ -4,17 +4,14 @@
     windowManager = new Object();
     // Set the location of the HUB based on URL
     switch (window.location.hostname.toLowerCase()) {
-        case "laptop":
-            $.connection.hub.url = "http://laptop/server/signalr/";
+        case "fde.client.sams.hawkbane.biz":
+            $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
             break;
-        case "localhost":
-            $.connection.hub.url = "http://localhost:49608/signalr/";
+        case "beta.client.sams.hawkbane.biz":
+            $.connection.hub.url = "http://beta.server.sams.hawkbane.biz/signalr/";
             break;
-        case "client.sams.hawkbane.biz":
-            $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
-            break;
-        case "popup.sams.hawkbane.biz":
-            $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
+        case "prod.client.sams.hawkbane.biz":
+            $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
             break;
     }
 
@@ -111,7 +108,7 @@
             //            $('img#SASHAScreenshot').attr('src', '/Images/wait.gif');
             //            myHub.server.pullSASHAScreenshot(id);
             winName = "window_" + id;
-            windowManager[winName] = window.open("http://popup.sams.hawkbane.biz?id=" + id, winName);
+            windowManager[winName] = window.open("/popup/index.html?id=" + id, winName);
         });
         $('tbody tr').removeClass('stripped');
         $('tbody tr:odd').addClass('stripped');

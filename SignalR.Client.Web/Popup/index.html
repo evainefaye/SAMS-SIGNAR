@@ -2,34 +2,25 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device=width, initial scale=1, maximum-scale=1, user-scalable=0" />
     <title></title>
 
     <!-- I installed the following Add on to Enable NTLM logins Easier
         https://addons.mozilla.org/en-Us/firefox/addon/integrated-auth-for-firefox/
     -->
-
-
     <!-- Begin Add SignalR -->
 
-    <script src="Scripts/jquery-3.1.1.min.js"></script>
-    <script src="Scripts/jquery.signalR-2.2.2.min.js"></script>
+    <script src="/Scripts/jquery-3.1.1.min.js"></script>
+    <script src="/Scripts/jquery.signalR-2.2.2.min.js"></script>
 
     <!-- Location of Hubs Proxy -->
-
     <!--
         Location of various Hubs Files, change this based on where your publishing to -->
-
     <!-- Running From Hawkbane.biz (Authentication Does not work)
         <script src="http://fde.server.sams.hawkbane.biz/signalr/hubs/"></script>
-        <script src="http://beta.server.sams.hawkbane.biz/signalr/hubs/"></script>
-        <script src="http://prod.server.sams.hawkbane.biz/signalr/hubs/"></script>
     -->
-
     <!-- Running From Laptop (Authentication Works here)
         <script src="http://laptop/server/signalr/hubs/"></script>
     -->
-
     <!-- Running From VS (Authentication Does not work)
         <script src="http://localhost:49608/signalr/hubs/"></script>
     -->
@@ -37,9 +28,7 @@
     <script src="http://fde.server.sams.hawkbane.biz/signalr/hubs/"></script>
 
     <!-- End Add SignalR -->
-
     <!-- Begin add Bootstrap -->
-
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
@@ -54,33 +43,24 @@
     <!-- Begin add countdown -->
     <script src="/Scripts/jquery.plugin.min.js"></script>
     <script src="/Scripts/jquery.countdown.min.js"></script>
-    <link href="/Stylesheets/jquery.countdown.css" rel="stylesheet"  type="text/css" />
+    <link href="/Stylesheets/jquery.countdown.css" rel="stylesheet" type="text/css" />
     <!-- End add countdown -->
 
-    <link href="/Stylesheets/StyleSheet.css" rel="stylesheet"  type="text/css" />
-    <script src="/Scripts/JavaScript.js"></script>
+    <!-- Begin add Motive Dictionary -->
+    <link href="Stylesheets/treeview.css" rel="stylesheet" type="text/css" />
+    <script src="Scripts/jquery.cookie.js"></script>
+    <script src="Scripts/jquery.treeview.js"></script>
+    <script src="Scripts/jquery.layout.js"></script>
+    <script src="Scripts/dictionary.js"></script>
+    <!-- End Motive Dictionary -->
+
+    <link href="Stylesheets/StyleSheet.css" rel="stylesheet"  type="text/css" />
+    <script src="Scripts/JavaScript.js"></script>
 </head>
 <body>
-    <div class="initializationScreen">
-        INITIALIZING....
-    </div>
-    <div class="mainScreen">
-        <div class="pull-left">
-            SERVER START TIME: <span id="serverStartTime">UNKNOWN</span>
-        </div>
-        <div class="pull-right">
-            <button class="btn-primary" id="RefreshSASHAConnections">Refresh SASHA Connections</button>
-        </div>
-        <br class=" = "clearfix" />
-        <br />
-        <ul id="skillgroupsTab" class="nav nav-tabs">
-        </ul>
-        <div id="skillgroupsContent" class="tab-content">
-        </div>
-        <div>
-            <ul id="activity">
-            </ul>
-        </div>
-    </div>
-</body>
+    <div id="header"></div>
+    <br />
+    <div id="screenshotInfo" class="center text-center">PENDING SCREENSHOT</div>
+    <img class="screenshot center" id="SASHAScreenshot" />
+ </body>
 </html>
