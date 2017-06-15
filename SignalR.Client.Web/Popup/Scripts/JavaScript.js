@@ -3,17 +3,26 @@
 
     // Set the location of the HUB based on URL
     switch (window.location.hostname.toLowerCase()) {
-        case "laptop":
-            $.connection.hub.url = "http://laptop/server/signalr/";
+        case "fde.client.sams.hawkbane.biz":
+            $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
             break;
-        case "localhost":
-            $.connection.hub.url = "http://localhost:49608/signalr/";
+        case "fde.hawkbane.biz":
+            $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
             break;
-        case "client.sams.hawkbane.biz":
-            $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
+        case "beta.client.sams.hawkbane.biz":
+            $.connection.hub.url = "http://beta.server.sams.hawkbane.biz/signalr/";
             break;
-        case "popup.sams.hawkbane.biz":
-            $.connection.hub.url = "http://server.sams.hawkbane.biz/signalr/";
+        case "beta.hawkbane.biz":
+            $.connection.hub.url = "http://beta.server.sams.hawkbane.biz/signalr/";
+            break;
+        case "prod.client.sams.hawkbane.biz":
+            $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
+            break;
+        case "prod.hawkbane.biz":
+            $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
+            break;
+        default:
+            $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
             break;
     }
 

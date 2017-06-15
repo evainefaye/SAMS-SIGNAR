@@ -7,10 +7,22 @@
         case "fde.client.sams.hawkbane.biz":
             $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
             break;
+        case "fde.hawkbane.biz":
+            $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
+            break;
         case "beta.client.sams.hawkbane.biz":
             $.connection.hub.url = "http://beta.server.sams.hawkbane.biz/signalr/";
             break;
+        case "beta.hawkbane.biz":
+            $.connection.hub.url = "http://beta.server.sams.hawkbane.biz/signalr/";
+            break;
         case "prod.client.sams.hawkbane.biz":
+            $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
+            break;
+        case "prod.hawkbane.biz":
+            $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
+            break;
+        default:
             $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
             break;
     }
