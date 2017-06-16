@@ -29,6 +29,16 @@ $(document).ready(function () {
     $('span#version').html(version);
     $('a#monitorURL').attr('href', monitorURL);
 
+    $('button#toggleDebug').off('click').on('click', function () {
+        if ($('ul#activity').css('display') != 'none') {
+            $('ul#activity').hide();
+            $('button#toggleDebug').html("Show Debug Information");
+        } else {
+            $('ul#activity').show();
+            $('button#toggleDebug').html('Hide Debug Information');
+        }
+    });
+
     // Initialize variables
     disconnectNotified = false;
     myHub = $.connection.myHub;
@@ -36,7 +46,7 @@ $(document).ready(function () {
     myHub.client.showActivity = function (timestamp, text) {
         time = toDisplayTimestamp(timestamp);
         text = "<li>" + time + text + "</li>";
-        $('ul#activity').append(text);
+        $('ul#activity').prepend(text);
     };
 
     // Request a SASHA Screenshot
@@ -101,9 +111,7 @@ showRegisterSASHASession = function () {
         if (attUID == "" || agentName == "" || loc == "" || smpSessionId == "") {
             return false;
         }
-        myHub.server.registerSASHASession(attUID, agentName, location, smpSessionId);
-        console.log('running: myHub.server.registerSASHASession("' + attUID + '", "' + agentName + '","' + loc + '","' + smpSessionId + '");');
-        console.log('exact: myHub.server.registerSASHASession(attUID, agentName, location, smpSessionId);');
+        myHub.server.registerSASHASession(attUID, agentName, loc, smpSessionId);
         $('div#registerSASHASession').hide();
         $('div#startSASHAFlow').show();
         showStartSASHAFlow();
@@ -133,8 +141,6 @@ showStartSASHAFlow = function () {
             return false;
         }
         myHub.server.startSASHAFlow(skillGroup, flowName, stepName);
-        console.log('running: myHub.server.startSASHAFlow("' + skillGroup + '", "' + flowName + '", "' + stepName + '");');
-        console.log('exact: myHub.server.startSASHAFlow(skillGroup, flowName, stepName);');
         $('div#startSASHAFlow').hide();
         $('div#updateNodeInfo').show();
         showUpdateNodeInfo();
@@ -162,8 +168,6 @@ showUpdateNodeInfo = function () {
             return false;
         }
         myHub.server.updateNodeInfo(flowName, stepName);
-        console.log('running: myHub.server.updateNodeInfo("' + flowName + '", "' + stepName + '")');
-        console.log('exact: myHub.server.updateNodeInfo(flowName, stepName);');
     });
     $('button#restartFlow').off('click').on('click', function () {
         location.reload();

@@ -41,3 +41,7 @@ td.buttonStacked {
 .error {
     border: solid 1px red;
 }
+
+ul#activity {
+    display: none;
+}
