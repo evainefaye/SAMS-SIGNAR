@@ -76,6 +76,7 @@ namespace SignalR.Server.Web
                 userInfo.locationCode = locationCode;
                 userInfo.smpSessionId = smpSessionId;
                 Users.Add(connectionId, userInfo);
+                ShowActivity("all", "Registered: " + attUID + ", " + agentName + ", " + locationCode + ", " + smpSessionId + ", " + userInfo);
             }
         }
 
@@ -93,15 +94,16 @@ namespace SignalR.Server.Web
             string agentName = UserInfo.agentName;
             string locationCode = UserInfo.locationCode;
             string smpSessionId = UserInfo.smpSessionId;
-            string SessionStartTime = DateTime.UtcNow.ToString("o");
+            string sessionStartTime = DateTime.UtcNow.ToString("o");
             string nodeStartTime = DateTime.UtcNow.ToString("o");
             UserInfo.skillGroup = skillGroup;
-            UserInfo.sessionStartTime = SessionStartTime;
+            UserInfo.sessionStartTime = sessionStartTime;
             UserInfo.flowName = flowName;
             UserInfo.nodeName = nodeName;
             UserInfo.nodeStartTime = nodeStartTime;
             Users[connectionId] = UserInfo;
-            AddSASHAConnection(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, SessionStartTime, flowName, nodeName, nodeStartTime);
+            AddSASHAConnection(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime);
+            ShowActivity("all", "Started flow for " + connectionId + "," + attUID + "," + agentName + "," + locationCode + "," + smpSessionId + "," + skillGroup + "," + sessionStartTime + "," + flowName + "," + nodeName + "," + nodeStartTime);
         }
 
         // Request all clients to add an active SASHA flow to the monitor display
@@ -155,6 +157,7 @@ namespace SignalR.Server.Web
                 Users[connectionId] = UserInfo;
             }
             Clients.All.updateNodeInfo(connectionId, flowName, nodeName, nodeStartTime);
+            ShowActivity("all", "Updating Node: " + connectionId + "," + flowName + "," + nodeStartTime);
         }
 
         public void PullSASHAScreenshot(string SASHAConnectionId)

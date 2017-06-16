@@ -33,6 +33,11 @@ $(document).ready(function () {
     disconnectNotified = false;
     myHub = $.connection.myHub;
 
+    myHub.client.showActivity = function (timestamp, text) {
+        time = toDisplayTimestamp(timestamp);
+        text = "<li>" + time + text + "</li>";
+        $('ul#activity').append(text);
+    };
 
     // Request a SASHA Screenshot
     myHub.client.requestSASHAScreenshot = function (connectionId) {
@@ -98,6 +103,7 @@ showRegisterSASHASession = function () {
         }
         myHub.server.registerSASHASession(attUID, agentName, location, smpSessionId);
         console.log('running: myHub.server.registerSASHASession("' + attUID + '", "' + agentName + '","' + loc + '","' + smpSessionId + '");');
+        console.log('exact: myHub.server.registerSASHASession(attUID, agentName, location, smpSessionId);');
         $('div#registerSASHASession').hide();
         $('div#startSASHAFlow').show();
         showStartSASHAFlow();
@@ -126,8 +132,9 @@ showStartSASHAFlow = function () {
         if (skillGroup == "" || flowName == "" || stepName == "") {
             return false;
         }
-        console.log('running: myHub.server.startSASHAFlow("' + skillGroup + '", "' + flowName + '", "' + stepName + '");');
         myHub.server.startSASHAFlow(skillGroup, flowName, stepName);
+        console.log('running: myHub.server.startSASHAFlow("' + skillGroup + '", "' + flowName + '", "' + stepName + '");');
+        console.log('exact: myHub.server.startSASHAFlow(skillGroup, flowName, stepName);');
         $('div#startSASHAFlow').hide();
         $('div#updateNodeInfo').show();
         showUpdateNodeInfo();
@@ -155,6 +162,8 @@ showUpdateNodeInfo = function () {
             return false;
         }
         myHub.server.updateNodeInfo(flowName, stepName);
+        console.log('running: myHub.server.updateNodeInfo("' + flowName + '", "' + stepName + '")');
+        console.log('exact: myHub.server.updateNodeInfo(flowName, stepName);');
     });
     $('button#restartFlow').off('click').on('click', function () {
         location.reload();
@@ -176,3 +185,40 @@ getSkillGroup = function () {
     ];
     return skillGroups[Math.floor(Math.random() * skillGroups.length)];
 }
+
+// Convert Time to Local Time as HH:MM:SS
+toLocalTime = function (timestamp) {
+    if (timestamp !== null) {
+        timestamp = new Date(timestamp);
+        hours = "0" + timestamp.getHours();
+        hours = hours.slice(-2);
+        minutes = "0" + timestamp.getMinutes();
+        minutes = minutes.slice(-2);
+        seconds = "0" + timestamp.getSeconds();
+        seconds = seconds.slice(-2);
+        return hours + ":" + minutes + ":" + seconds;
+    }
+};
+
+// Convert Time to DateTime as MM/DD/YY @ HH:MM:SS
+toLocalDateTime = function (timestamp) {
+    if (timestamp !== null) {
+        timestamp = new Date(timestamp);
+        month = timestamp.getMonth();
+        date = timestamp.getDate();
+        year = timestamp.getFullYear();
+        hours = "0" + timestamp.getHours();
+        hours = hours.slice(-2);
+        minutes = "0" + timestamp.getMinutes();
+        minutes = minutes.slice(-2);
+        seconds = "0" + timestamp.getSeconds();
+        seconds = seconds.slice(-2);
+        return month + "/" + date + "/" + year + " @ " + hours + ":" + minutes + ":" + seconds;
+    }
+};
+
+// Convert Time to local time as [ HH:MM:SS ]
+toDisplayTimestamp = function (timestamp) {
+    timestamp = toLocalTime(timestamp);
+    return "[ " + timestamp + " ] ";
+};
