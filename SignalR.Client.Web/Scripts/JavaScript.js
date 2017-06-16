@@ -2,35 +2,36 @@
 
     document.title = "SAMS - SASHA ACTIVE MONITORING SYSTEM";
     windowManager = new Object();
-    // Set the location of the HUB based on URL
-    switch (window.location.hostname.toLowerCase()) {
-        case "fde.client.sams.hawkbane.biz":
+
+    hostname = window.location.hostname.split(".")[0];
+    // Set the location of the SignalR HUB based on URL
+    switch (window.location.hostname.toLowerCase().split(".")[0]) {
+        case "fde":
             $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
+            version = "FDE (FLOW DEVELOPMENT ENVIRONMENT)";
             break;
-        case "fde.hawkbane.biz":
-            $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
-            break;
-        case "beta.client.sams.hawkbane.biz":
+        case "beta":
             $.connection.hub.url = "http://beta.server.sams.hawkbane.biz/signalr/";
+            version = "BETA (PRE-PROD)";
             break;
-        case "beta.hawkbane.biz":
-            $.connection.hub.url = "http://beta.server.sams.hawkbane.biz/signalr/";
-            break;
-        case "prod.client.sams.hawkbane.biz":
+        case "prod":
             $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
-            break;
-        case "prod.hawkbane.biz":
-            $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
+            version = "PRODUCTION";
             break;
         default:
             $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
+            version = "PRODUCTION";
             break;
     }
 
+    // Set the Version Type
+    $('span#version').html(version);
+
+    // Initialize variables
     disconnectNotified = false;
     myHub = $.connection.myHub;
 
-    // Remove any detail windows when main window is closed
+    // If you close this window, then use the window manager to locate and close and detail windows opened by this application
     $(window).on('unload', function () {
         $.each(windowManager, function (key) {
             windowManager[key].close();
@@ -38,24 +39,21 @@
         });
     });
 
-    // Default Client showActivity Method
-    myHub.client.showActivity = function (timestamp, text) {
-        text = toDisplayTimestamp(timestamp) + text;
-        $('<li>' + text + '</li>').hide().prependTo('ul#activity').slideDown('slow');
-    };
-
-    // Add row to SASHA Users Information
+    // Add a new SASHA connection to relevant table(s)
     myHub.client.addSASHAConnection = function (connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime) {
+        // If skillGroup is not set, then set it as UNKNOWN
         if (skillGroup === null || skillGroup === "null" || skillGroup === "") {
             skillGroup = "UNKNOWN";
         }
-        // Begin add tab code here
-        if ($('ul#skillgroupsTab li#' + skillGroup).length === 0) {
-            // Skill Group tab did not exist so we need to add one
-            row = '<li id="' + skillGroup + '"><a class="nav-link"  data-toggle="tab" href="#skillgroupsContent_' + skillGroup + '">' + skillGroup + '</a></li>';
-            $('ul#skillgroupsTab').append(row);
-            row = '<div id="skillgroupsContent_' + skillGroup + '" class="tab-pane">' +
-                '<table class="center hover-highlight serviceline">' +
+
+        // If there is no tab for the skillGroup your about to work with, then add it
+        if (!$('ul#Tabs li[tabId="' + skillGroup + '"]').length) {
+            row = '<li tabId="' + skillGroup + '">' +
+                '<a class="nav-link" data-toggle="tab" skillGroup="' + skillGroup + '" href="#' + skillGroup + '">' + skillGroup + ' (<span>0</span>)</a>' +
+                '</li>';
+            $('ul#Tabs').append(row);
+            row = '<div id="' + skillGroup + '" class="tab-pane">' +
+                '<table class="center hover-highlight serviceline ' + skillGroup + '" >' +
                 '<thead>' +
                 '<tr>' +
                 '<th class="text-center attUID">ATT<br />UID</th>' +
@@ -72,23 +70,25 @@
                 '</tbody>' +
                 '</table>' +
                 '</div>';
-            $('div#skillgroupsContent').append(row);
-            sortTabs('ul#skillgroupsTab');
-            $('div#skillgroupsContent_' + skillGroup + ' table').tablesorter({
+            $('div#Contents').append(row);
+            // Sort Tabs in Alphabetical order
+            sortTabs('ul#Tabs');
+            //  Make the added table sortable
+            $('table.' + skillGroup).tablesorter({
                 theme: "custom",
                 sortList: [[3, 0]],
                 sortReset: true,
                 widgets: ["zebra"]
             });
+            // Resort the table anytime its tab is clicked
             $('a[data-toggle="tab"]').off('shown.bs.tab.resort').on('shown.tab.bs.resort', function(e) { 
-                var target = $(e.target).attr('href');
-                $('div' + target).find('table').trigger('update');
+                var target = $(e.target).attr('skillGroup');
+                $('table.' + target).trigger('update');
             });
         }
 
-        // End Add tab code
-
-        if ($('div#skillgroupsContent_' + skillGroup).find('table tbody tr[connectionId="' + connectionId + '"]').length === 0) {
+        // If there is no row matching the row your about to add, then go ahead and add it
+        if (!$('table.' + skillGroup + ' tbody tr[connectionId="' + connectionId + '"]').length) {
             sessionStartTimestamp = new Date(sessionStartTime);
             sessionStartTime = toLocalTime(sessionStartTime);
             nodeStartTimestamp = new Date(nodeStartTime);
@@ -97,32 +97,35 @@
                 + '<td class="text-centers">' + attUID + '</td>'
                 + '<td class="text-left">' + agentName + '</td>'
                 + '<td class="text-center">' + sessionStartTime + '</td>'
-                + '<td class="text-right"><div class="session" sessionDurationId="sessionDuration_' + connectionId + '"></div></td>'
+                + '<td class="text-right"><div sessionDurationId="sessionDuration_' + connectionId + '"></div></td>'
                 + '<td class="text-center" nodeStartTimeId="nodeStartTime_' + connectionId + '">' + nodeStartTime + '</td>'
-                + '<td class="text-right"><div class="node" nodeDurationId="nodeDuration_' + connectionId + '"></div></td>'
+                + '<td class="text-right"><div nodeDurationId="nodeDuration_' + connectionId + '"></div></td>'
                 + '<td class="text-left" flowNameId="flowName_' + connectionId + '">' + flowName + '</td>'
                 + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '">' + nodeName + '</td>'
                 + '</tr>';
-            $('div#skillgroupsContent_' + skillGroup + ' table').find('tbody:last').append(row);
+            $('table.' + skillGroup + ' tbody:last').append(row);
+
+            // Also add to All Sessions tab.  New row defined here as that includes SkillGroup
             row = '<tr connectionId="' + connectionId + '">'
                 + '<td class="text-centers">' + attUID + '</td>'
                 + '<td class="text-left">' + agentName + '</td>'
                 + '<td class="text-center">' + sessionStartTime + '</td>'
-                + '<td class="text-right"><div class="session" sessionDurationId="sessionDuration_' + connectionId + '"></div></td>'
+                + '<td class="text-right"><div sessionDurationId="sessionDuration_' + connectionId + '"></div></td>'
                 + '<td class="text-center" nodeStartTimeId="nodeStartTime_' + connectionId + '">' + nodeStartTime + '</td>'
-                + '<td class="text-right"><div class="node" nodeDurationId="nodeDuration_' + connectionId + '"></div></td>'
+                + '<td class="text-right"><div nodeDurationId="nodeDuration_' + connectionId + '"></div></td>'
                 + '<td class="text-center">' + skillGroup + '</td>'
                 + '<td class="text-left" flowNameId="flowName_' + connectionId + '">' + flowName + '</td>'
                 + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '">' + nodeName + '</td>'
                 + '</tr>';
+            $('table.ALLSESSIONS tbody:last').append(row);
 
-            $('div#skillgroupsContent_ALLSESSIONS table').find('tbody:last').append(row);
+            // Initialize Counters for the connection just added
             $('div[sessionDurationId="sessionDuration_' + connectionId + '"]').countdown({
                 since: sessionStartTimestamp,
                 compact: true,
                 layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
                 format: 'yowdhMS',
-                onTick: checkExtendedDuration,
+                onTick: checkStalledSessions,
                 tickInterval: 5
             });
             $('div[nodeDurationId="nodeDuration_' + connectionId + '"]').countdown({
@@ -130,85 +133,102 @@
                 compact: true,
                 layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
                 format: 'yowdhMS',
-                onTick: checkExtendedDuration,
+                onTick: checkTimerStyling,
                 tickInterval: 5
             });
-//            if ($('#skillgroupsTab.active').length === 0) {
-//                $('#skillgroupsTab a:first').click();
-//            }
-            $('div#skillgroupsContent_' + skillGroup).find('table').trigger('update');
-            $('div#skillgroupsContent_ALLSESSIONS').find('table').trigger('update');
+            // Request the tables to resort
+            $('table.' + skillGroup).trigger('update');
+            $('table.ALLSESSIONS').trigger('update');
 
+            // Update Count(s) of users on table(s)
+            userCount = $('table.' + skillGroup + ' tbody tr').not('.group-header').length;
+            $('a[skillGroup="' + skillGroup + '"] span').html(userCount);
+            userCount = $('table.ALLSESSIONS tbody tr').not('.group-header').length;
+            $('a[skillGroup="ALLSESSIONS"] span').html(userCount);
         }
-        // Setup the table click 
-        $('table tbody tr').off('dblclick touch').on('dblclick touch', function () {
+
+        // Update on doubleclick events to include new row
+        $('table tbody tr').not('.group-header').off('dblclick').on('dblclick', function () {
             id = $(this).attr('connectionId');
-            //            $('img#SASHAScreenshot').attr('src', '/Images/wait.gif');
-            //            myHub.server.pullSASHAScreenshot(id);
             winName = "window_" + id;
             windowManager[winName] = window.open("/popup/index.html?id=" + id, winName);
         });
     };
 
-    // Display SASHA screenshot
-    myHub.client.pushSASHAScreenshot = function (img) {
-        $('img#SASHAScreenshot').attr('src', img);
-        $('img#SASHAScreenshot').show();
-    };
 
+    // Remove a row for disconnected/completed sessions
     myHub.client.removeSASHAConnection = function (connectionId, skillGroup) {
+        // Remove timer(s) associated with connection before removing row to prevent a javascript error
         $('div[sessionDurationId="sessionDuration_' + connectionId + '"]').countdown('destroy');
         $('div[nodeDurationId="nodeDuration_' + connectionId + '"]').countdown('destroy');
         $('tr[connectionId="' + connectionId + '"]').remove();
+        // force the groupable pages to refresh since their categories may now be empty
+        $('table.STALLEDSESSIONS').trigger("update");
+        $('table.ALLSESSIONS').trigger("update");
 
+        // Update Count(s) of users on table(s)
+        userCount = $('table.' + skillGroup + ' tbody tr').not('.group-header').length;
+        $('a[skillGroup="' + skillGroup + '"] span').html(userCount);
+        userCount = $('table.ALLSESSIONS tbody tr').not('.group-header').length;
+        $('a[skillGroup="ALLSESSIONS"] span').html(userCount);
+        userCount = $('table.STALLEDSESSIONS tbody tr').not('.group-header').length;
+        $('a[skillGroup="STALLEDSESSIONS"] span').html(userCount);
+
+        // Close any detail windows associated to connection
         winName = "window_" + connectionId;
         if (typeof windowManager[winName] === "object") {
             windowManager[winName].close();
             delete windowManager[winName];
         }
-        //        if ($('table#sashaConnections_' + skillGroup + ' tbody tr').length == 0) {
-        //            $('#skillgroupsTab li#' + skillGroup).remove();
-        //            $('#skillgroupsContent_' + skillGroup).remove();
-        //        }
+
+        // Can optionally have it remove the tab(s) and tables of any empty tables
+        // if (!$('table.' + skillGroup + ' tbody tr').not('.group-header').length) {
+        //   $('#Tabs li[tabId="' + skillGroup +'"]).remove();
+        //   $('div#' + skillGroup).remove();
+        // }
     };
 
+    // Update Flow / Node and Node Timers on notification of new Flow/Node
     myHub.client.updateNodeInfo = function (connectionId, flowName, nodeName, nodeStartTime) {
         nodeStartTimestamp = new Date(nodeStartTime);
         nodeStartTime = toLocalTime(nodeStartTime);
+        // first remove any countdown to avoid javascript errors
         $('div[nodeDurationId="nodeDuration_' + connectionId + '"]').countdown('destroy');
         $('td[flowNameId="flowName_' + connectionId + '"]').html(flowName);
         $('td[nodeNameId="nodeName_' + connectionId + '"]').html(nodeName);
         $('td[nodeStartTime="nodeStartTime_' + connectionId + '"]').html(nodeStartTime);
+        // restart countdown
         $('div[nodeDurationId="nodeDuration_' + connectionId + '"]').countdown({
             since: nodeStartTimestamp,
             compact: true,
             layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
-            format: 'yowdhMS'
+            format: 'yowdhMS',
+            onTick: checkTimerStyling,
+            tickInterval: 5
         });
     };
 
+    // Restore the Active Tab 
     myHub.client.resetActiveTab = function (active) {
-        //        setTimeout(function () {
-        $('li#' + active + ' a:first').click();
-        //            $('div.initializationScreen').hide();
-        //            $('div.mainScreen').show();
-        //            console.log('li#' + active + ' a:first');
-        //        }, 3000);
+        $('a[skillGroup="' + active + '"]').click();
     };
 
+
+    // Show the Server Start Time on the main screen
     myHub.client.showServerStartTime = function (timestamp) {
         time = toLocalDateTime(timestamp);
         $('span#serverStartTime').html(time);
     };
 
-
-
+    // Stalled Session detected, add an entry under stalled session to indicate it
     myHub.client.receiveStalledSession = function (connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime) {
-        if ($('div#skillgroupsContent_STALLEDSESSIONS').find('table tbody tr[connectionId="' + connectionId + '"]').length === 0) {
+        // If it isn't already in stalled sessions then add it
+        if (!$('table.STALLEDSESSIONS tbody tr[connectionId="' + connectionId + '"]').length) {
             sessionStartTimestamp = new Date(sessionStartTime);
             sessionStartTime = toLocalTime(sessionStartTime);
             nodeStartTimestamp = new Date(nodeStartTime);
             nodeStartTime = toLocalTime(nodeStartTime);
+            // If skill group was not set, set it to UNKNOWN
             if (skillGroup === null || skillGroup === "null" || skillGroup === "") {
                 skillGroup = "UNKNOWN";
             }
@@ -216,20 +236,21 @@
                 + '<td class="text-centers">' + attUID + '</td>'
                 + '<td class="text-left">' + agentName + '</td>'
                 + '<td class="text-center">' + sessionStartTime + '</td>'
-                + '<td class="text-right"><div class="session" sessionDurationId="sessionDuration_' + connectionId + '"></div></td>'
+                + '<td class="text-right"><div sessionDurationId="sessionDuration_' + connectionId + '"></div></td>'
                 + '<td class="text-center" nodeStartTimeId="nodeStartTime_' + connectionId + '">' + nodeStartTime + '</td>'
-                + '<td class="text-right"><div class="node" nodeDurationId="nodeDuration_' + connectionId + '"></div></td>'
+                + '<td class="text-right"><div nodeDurationId="nodeDuration_' + connectionId + '"></div></td>'
                 + '<td class="text-center">' + skillGroup + '</td>'
                 + '<td class="text-left" flowNameId="flowName_' + connectionId + '">' + flowName + '</td>'
                 + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '">' + nodeName + '</td>'
                 + '</tr>';
-            $('div#skillgroupsContent_STALLEDSESSIONS table ').find('tbody:last').append(row);
+            $('table.STALLEDSESSIONS tbody:last').append(row);
+            // initialize Countdown
             $('div[sessionDurationId="sessionDuration_' + connectionId + '"]').countdown({
                 since: sessionStartTimestamp,
                 compact: true,
                 layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
                 format: 'yowdhMS',
-                onTick: checkExtendedDuration,
+                onTick: checkTimerStyling,
                 tickInterval: 5
             });
             $('div[nodeDurationId="nodeDuration_' + connectionId + '"]').countdown({
@@ -237,27 +258,23 @@
                 compact: true,
                 layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
                 format: 'yowdhMS',
-                onTick: checkExtendedDuration,
+                onTick: checkTimerStyling,
                 tickInterval: 5
             });
-            $('div#skillgroupsContent_STALLEDSESSIONS').find('table').trigger('update');
+            // update user count
+            userCount = $('table.STALLEDSESSIONS tbody tr').not('.group-header').length;
+            $('a[skillGroup="STALLEDSESSIONS"] span').html(userCount);
+
+            // Trigger table to sort
+            $('table.STALLEDSESSIONS').trigger('update');
         }
     };
 
-
-
-
-
-
-
-
-
-
-
-
+    // Start the Hub then display the screen after initialization
     $.connection.hub.start()
-        .done(setTimeout(showMainScreen, 2000));
+        .done(setTimeout(showMainScreen, 1200));
 
+    // if connection is lost, show that it was lost and try to reconnect
     $.connection.hub.disconnected(function () {
         if (!disconnectNotified) {
             $('div.initializationScreen').html('CONNECTION LOST.  ATTEMPTING RECONNECT...');
@@ -274,27 +291,32 @@
         }, 5000); // Restart connection after 5 seconds.
     });
 
-    // Page Specific JS Begins Here 
 
-    // Refresh SASHA Connections Display
+    // Clear all tables and reload
     $('button#RefreshSASHAConnections').off('click').on('click', function () {
-        //        $('div.initializationScreen').html('REFRESHING CONNECTION INFORMATION...');
-        //        $('div.initializationScreen').show();
-        //        $('div.mainScreen').hide();
-        active = $('li.active').attr('id');
+        // store currently active tab
+        active = $('li.active').attr('tabId');
+        // Remove any countdown timers
         $('.is-countdown').countdown('destroy');
-        $('ul#skillgroupsTab').empty();
-        $('div#skillgroupsContent').empty();
+        // Empty information
+        $('ul#Tabs').empty();
+        $('div#Contents').empty();
+        // Close any detail windows and remove them from window manager
         $.each(windowManager, function (key) {
             windowManager[key].close();
             delete windowManager[key];
         });
-        addCustomTab();
+        // Add the custom Tabs back
+        addCustomTabs();
+        // Request sasha connections information
         myHub.server.refreshSASHAConnections(active);
     });
-    addCustomTab();
+
+    // Add custom Tabs
+    addCustomTabs();
 });
 
+// Convert Time to Local Time as HH:MM:SS
 toLocalTime = function (timestamp) {
     if (timestamp !== null) {
         timestamp = new Date(timestamp);
@@ -308,11 +330,12 @@ toLocalTime = function (timestamp) {
     }
 };
 
+// Convert Time to DateTime as MM/DD/YY @ HH:MM:SS
 toLocalDateTime = function (timestamp) {
     if (timestamp !== null) {
         timestamp = new Date(timestamp);
         month = timestamp.getMonth();
-        day = timestamp.getDay();
+        date = timestamp.getDate();
         year = timestamp.getFullYear();
         hours = "0" + timestamp.getHours();
         hours = hours.slice(-2);
@@ -320,22 +343,27 @@ toLocalDateTime = function (timestamp) {
         minutes = minutes.slice(-2);
         seconds = "0" + timestamp.getSeconds();
         seconds = seconds.slice(-2);
-        return month + "/" + day + "/" + year + " @ " + hours + ":" + minutes + ":" + seconds;
+        return month + "/" + date + "/" + year + " @ " + hours + ":" + minutes + ":" + seconds;
     }
 };
 
+// Convert Time to local time as [ HH:MM:SS ]
 toDisplayTimestamp = function (timestamp) {
     timestamp = toLocalTime(timestamp);
     return "[ " + timestamp + " ] ";
 };
 
+// Hide the initialization screen and show the main screen
 showMainScreen = function () {
+    // Request SASHA Connections noting that there was no active tab yet
     myHub.server.refreshSASHAConnections("");
     $('div.initializationScreen').hide();
     $('div.mainScreen').show();
+    // Update Server Start Time
     myHub.server.requestServerStartTime();
 };
 
+// Sort Tabs
 sortTabs = function (element) {
     var myList = $(element);
     var listItems = myList.children('li').get();
@@ -350,31 +378,36 @@ sortTabs = function (element) {
     });
 };
 
-checkExtendedDuration = function (periods) {
-    if ($(this).hasClass("session")) {
-        if ($.countdown.periodsToSeconds(periods) > 1200) {
-            $(this).addClass('highlightDuration');
-            connectionId = $(this).closest('tr').attr('connectionId');
-            if (!$('div#skillgroupContent_STALLEDSESSIONS table tbody tr[connectionId="' + connectionId + '"]').length) {
-                myHub.server.requestStalledSession(connectionId);
-            }
-        }
-    }
-    if ($(this).hasClass("node")) {
-        if ($.countdown.periodsToSeconds(periods) > 300) {
-            $(this).addClass('highlightDuration');
-        } else {
-            $(this).removeClass('highlightDuration');
+// Checks if SESSION is showing as over threshold for being stalled and adds it to the stalled sessions if so
+checkStalledSessions = function (periods) {
+    if ($.countdown.periodsToSeconds(periods) > 1200) {
+        $(this).addClass('highlightDuration');
+        connectionId = $(this).closest('tr').attr('connectionId');
+        if (!$('table.STALLEDSESSIONS tbody tr[connectionId="' + connectionId + '"]').length) {
+            myHub.server.requestStalledSession(connectionId);
         }
     }
 };
 
-addCustomTab = function () {
+// Add Styling on Timer if over threshold
+checkTimerStyling = function (periods) {
+    if ($.countdown.periodsToSeconds(periods) > 300) {
+        $(this).addClass('highlightDuration');
+    } else {
+        $(this).removeClass('highlightDuration');
+    }
+}
 
-    row = '<li class="pull-right" id="ALLSESSIONS"><a class="nav-link"  data-toggle="tab" href="#skillgroupsContent_ALLSESSIONS">ALL SESSIONS</a></li>';
-    $('ul#skillgroupsTab').append(row);
-    row = '<div id="skillgroupsContent_ALLSESSIONS" class="tab-pane">' +
-        '<table class="center groupable hover-highlight">' +
+
+// Add Stalled Sessions and All Sessions tabs
+addCustomTabs = function () {
+    // Start bya dding All Sessions Tab
+    row = '<li class="pull-right" tabId="ALLSESSIONS">' +
+        '<a class="nav-link" data-toggle="tab" skillGroup="ALLSESSIONS" href="#ALLSESSIONS">ALL SESSIONS (<span>0</span>)</a>' +
+        '</li>';
+    $('ul#Tabs').append(row);
+    row = '<div id="ALLSESSIONS" class="tab-pane">' +
+        '<table class="center groupable hover-highlight ALLSESSIONS">' +
         '<thead>' +
         '<tr>' +
         '<th class="text-center attUID group-letter">ATT<br />UID</th>' +
@@ -392,29 +425,30 @@ addCustomTab = function () {
         '</tbody>' +
         '</table>' +
         '</div>';
-    $('div#skillgroupsContent').append(row);
-    $('.nav-tabs a[href="#skillgroupsContent_ALLSESSIONS"]').tab('show');
-    $('#skillgroupsContent_ALLSESSIONS').find('table').tablesorter({
+    $('div#Contents').append(row);
+    // Set ALL Sessions as default tab
+    $('.nav-tabs a[skillGroup="ALLSESSIONS"]').tab('show');
+    // Make table sortable
+    $('table.ALLSESSIONS').tablesorter({
         theme: "custom",
-        sortList: [[1,0],[6, 0]],
         sortReset: true,
         widgets: ["zebra", "group"],
         widgetOptions: {
+            group_collapsed: true,
             group_forceColumn: [6]
         }
     });
     $('a[data-toggle="tab"]').off('shown.bs.tab.resort').on('shown.tab.bs.resort', function (e) {
-        var target = $(e.target).attr('href');
-        $('div' + target).find('table').trigger('update');
+        var target = $(e.target).attr('skillGroup');
+        $('table.' + target).trigger('update');
     });
-
-
-
-
-    row = '<li class="pull-right" id="STALLEDSESSIONS"><a class="nav-link"  data-toggle="tab" href="#skillgroupsContent_STALLEDSESSIONS">STALLED SESSIONS</a></li>';
-    $('ul#skillgroupsTab').append(row);
-    row = '<div id="skillgroupsContent_STALLEDSESSIONS" class="tab-pane">' +
-        '<table class="center groupable hover-highlight">' +
+    // Add StalledSessions Tab
+    row = '<li class="pull-right" tabId="STALLEDSESSIONS">' +
+        '<a class="nav-link" data-toggle="tab" skillGroup="STALLEDSESSIONS" href="#STALLEDSESSIONS">STALLED SESSIONS (<span>0</span>)</a>' +
+        '</li> ';
+    $('ul#Tabs').append(row);
+    row = '<div id="STALLEDSESSIONS" class="tab-pane">' +
+        '<table class="center groupable hover-highlight STALLEDSESSIONS">' +
         '<thead>' +
         '<tr>' +
         '<th class="text-center attUID group-letter">ATT<br />UID</th>' +
@@ -432,19 +466,20 @@ addCustomTab = function () {
         '</tbody>' +
         '</table>' +
         '</div>';
-    $('div#skillgroupsContent').append(row);
-//    $('.nav-tabs a[href="#skillgroupsContent_STALLEDSESSIONS"]').tab('show');
-    $('#skillgroupsContent_STALLEDSESSIONS').find('table').tablesorter({
+    $('div#Contents').append(row);
+    // Make Table Sortable
+    $('table.STALLEDSESSIONS').tablesorter({
         theme: "custom",
-        sortList: [[3,0],[6, 0]],
         sortReset: true,
         widgets: ["zebra", "group"],
         widgetOptions: {
+            group_collapsed: true,
             group_forceColumn: [6]
         }
     });
+    // When tab is clicked, it should resort the table for it
     $('a[data-toggle="tab"]').off('shown.bs.tab.resort').on('shown.tab.bs.resort', function (e) {
-        var target = $(e.target).attr('href');
-        $('div' + target).find('table').trigger('update');
+        var target = $(e.target).attr('skillGroup');
+        $('table.' + target).trigger('update');
     });
 };

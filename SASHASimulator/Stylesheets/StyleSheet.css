@@ -1,0 +1,43 @@
+﻿#registerSASHASession {
+    display: none;
+}
+
+#startSASHAFlow {
+    display: none;
+}
+
+#updateNodeInfo {
+    display: none;
+}
+
+table.display {
+    width: 45%;
+}
+
+table.display tr td  {
+    border-collapse: collapse;
+    border: solid 1px #000;
+}
+
+td.label {
+    font-weight: bold;
+    text-align: right;
+}
+
+td.data > input {
+    width: 30em;
+}
+
+td.button {
+    padding-top: 3em;
+    text-align: center;
+}
+
+td.buttonStacked {
+    padding-top: .25em;
+    text-align: center;
+}
+
+.error {
+    border: solid 1px red;
+}

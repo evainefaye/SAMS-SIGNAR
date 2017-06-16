@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device=width, initial scale=1, maximum-scale=1, user-scalable=0" />
+    <title></title>
+
+    <!-- I installed the following Add on to Enable NTLM logins Easier
+        https://addons.mozilla.org/en-Us/firefox/addon/integrated-auth-for-firefox/
+    -->
+    <!-- Begin Add SignalR -->
+
+    <script src="Scripts/jquery-3.1.1.min.js"></script>
+    <script src="Scripts/jquery.signalR-2.2.2.min.js"></script>
+
+    <!-- Location of Hubs Proxy -->
+    <!--
+        Location of various Hubs Files, change this based on where your publishing to -->
+    <!-- Running From Hawkbane.biz (Authentication Does not work)
+        <script src="http://fde.server.sams.hawkbane.biz/signalr/hubs/"></script>
+        <script src="http://beta.server.sams.hawkbane.biz/signalr/hubs/"></script>
+        <script src="http://prod.server.sams.hawkbane.biz/signalr/hubs/"></script>
+    -->
+
+    <script src="http://fde.server.sams.hawkbane.biz/signalr/hubs/"></script>
+
+    <!-- End Add SignalR -->
+
+    <!-- Begin add html2canvas -->
+    <script src="/Scripts/html2canvas.js"></script>
+    <!-- End html2canvas -->
+
+    <link href="/Stylesheets/StyleSheet.css" rel="stylesheet" type="text/css" />
+    <script src="/Scripts/JavaScript.js"></script>
+</head>
+<body>
+    VERSION: <span id="version">UNKNOWN</span>
+    <br />
+    <div>This emulates the process that SASHA goes through when connecting to SignalR for testing/troubleshooting purposes.<p>You may monitor the udates at the <a href="" id="monitorURL" target="_blank">SAMS Site</a> for your version.</div>
+    <br />
+    <br />
+    <div id="connecting">
+        Connecting...
+    </div>
+    <div id="registerSASHASession">
+        <p>You may leave these prefilled randomly generated values, or update them as you wish.</p>
+        <table class="display">
+            <tr>
+                <td class="label">ATTUID:</td>
+                <td class="data"><input type="text" id="attUID" /></td>
+            </tr>
+            <tr>
+                <td class="label">AGENT NAME:</td>
+                <td class="data"><input type="text" id="agentName" /></td>
+            </tr>
+            <tr>
+                <td class="label">LOCATION:</td>
+                <td class="data"><input type="text" id="location" /></td>
+            </tr>
+            <tr>
+                <td class="label">MOTIVE SESSION ID:</td>
+                <td class="data"><input type="text" id="smpSessionId" /></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="button"><button id="registerSASHASessionButton">Register SASHA Session</button></td>
+            </tr>
+        </table>
+    </div>
+    <div id="startSASHAFlow">
+        <p>At this point in the process SASHA has a connection to the server, but does not yet think that the flow is being run so does not yet display.<br />After selecting the skill group, and flow name / node name it will populate to the monitor when you click continue.   (This is the same as getting to the data collection front end page in SASHA.)</p>
+        <table class="display">
+            <tr>
+                <td class="label">AGENT NAME:</td>
+                <td class="data agentName"></td>
+            </tr>
+            <tr>
+                <td class="label">SKILL GROUP:</td>
+                <td class="data"><input type+'text" id="skillGroup" /></td>
+            </tr>
+            <tr>
+                <td class="label">FLOW NAME:</td>
+                <td class="data"><input type="text" id="flowName" /></td>
+            </tr>
+            <tr>
+                <td class="label">STEP NAME:</td>
+                <td><input type="text" id="stepName" /></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="button"><button id="startSASHAFlowButton">Start SASHA Flow</button></td>
+            </tr>
+        </table>
+    </div>
+    <div id="updateNodeInfo">
+        <p>At this point its like your working a flow.  Each time you click Update node info it should treat it like you advanced to a new display node in SASHA.   Clicking Restart flow, will treat it like you have hit restart at the end of a flow.</p>
+        <p>If you want to track muliple connections each one needs its own copy of this site</p>
+        <table class="display">
+            <tr>
+                <td class="label">AGENT NAME:</td>
+                <td class="data agentName"></td>
+            </tr>
+            <tr>
+                <td class="label">SKILL GROUP:</td>
+                <td class="data skillGroup"></td>
+            </tr>
+            <tr>
+                <td class="label">LAST FLOW:</td>
+                <td class="data lastFlowName"></td>
+            </tr>
+            <tr>
+                <td class="label">LAST STEP:</td>
+                <td class="data lastStepName"></td>
+            </tr>
+            <tr>
+                <td class="label">FLOW NAME:</td>
+                <td class="data"><input type="text" class="flowName" /></td>
+            </tr>
+            <tr>
+                <td class="label">NODE NAME:</td>
+                <td class="data"><input type="text" class="stepName" /></td>
+            </tr>
+
+            <tr>
+                <td colspan="2" class="button"><button id="updateNodeInfoButton">Update Node Info</button></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="buttonStacked"><button id="restartFlow">Restart Flow</button></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
