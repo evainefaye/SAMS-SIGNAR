@@ -76,7 +76,7 @@ namespace SignalR.Server.Web
                 userInfo.locationCode = locationCode;
                 userInfo.smpSessionId = smpSessionId;
                 Users.Add(connectionId, userInfo);
-                ShowActivity("all", "Registered: " + attUID + ", " + agentName + ", " + locationCode + ", " + smpSessionId + ", " + userInfo);
+                ShowActivity("all", "Registered: " + attUID + ", " + agentName + ", " + locationCode + ", " + smpSessionId);
             }
         }
 

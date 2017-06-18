@@ -46,30 +46,32 @@
         }
         row = "<table class='noborder center'>" +
             "<tbody>" +
-            "<tr><td class='head text-right'>Agent Name: </td><td class='data'>" + agentName + " (" + attUID + ")</td>" +
-            "<td class='head text-right'>Skill Group: </td><td class='data'>" + skillGroup + "</td></tr>" +
-            "<tr><td class='head text-right'>SMP Session Id: </td><td class='data'>" + smpSessionId + "</td></tr>" +
-            "<tr><td class='head text-right'>Session Start Time: </td><td class='data'>" + sessionStartTime + "</td>" +
-            "<td class='head text-right'>Session Duration: </td><td class='data'><div id='sessionDuration_" + connectionId + "'></div></td></tr>" +
-            "<tr><td class='head text-right'>Flow Name: </td><td id='flowName_" + connectionId + "' class='data'>" + flowName + "</td>" +
-            "<td class='head text-right'>Step Name: </td><td id='nodeName_" + connectionId + "' class='data'>" + nodeName + "</td></tr>" +
-            "<tr><td class='head text-right'>Step Start Time: </td><td id='stepStartTime_" + connectionId + "' class='data'>" + nodeStartTime + "</td>" +
-            "<td class='head text-right'>Step Duration: </td><td class='data'><div id='stepDuration_" + connectionId + "'></div></td></tr>" +
+            "<tr><td class='head text-right'>AGENT NAME:</td><td class='data text-left'>" + agentName + " (" + attUID + ")</td>" +
+            "<td class='head text-right'>SKILL GROUP:</td><td class='data text-left'>" + skillGroup + "</td></tr>" +
+            "<tr><td class='head text-right'>SMP SESSION ID:</td><td class='data text-left'>" + smpSessionId + "</td></tr>" +
+            "<tr><td class='head text-right'>SESSION START TIME:</td><td class='data text-left'>" + sessionStartTime + "</td>" +
+            "<td class='head text-right'>SESSION DURATION:</td><td class='data text-left'><div id='sessionDuration_" + connectionId + "'></div></td></tr>" +
+            "<tr><td class='head text-right'>STEP START TIME:</td><td id='stepStartTime_" + connectionId + "' class='data text-left'>" + nodeStartTime + "</td>" +
+            "<td class='head text-right'>STEP DURATION:</td><td class='data text-left'><div id='stepDuration_" + connectionId + "'></div></td></tr>" +
+            "<tr><td class='head text-right'>FLOW NAME:</td><td id='flowName_" + connectionId + "' class='data text-left'>" + flowName + "</td>" +
+            "<td class='head text-right'>STEP NAME:</td><td id='nodeName_" + connectionId + "' class='data text-left'>" + nodeName + "</td></tr>" +
             "</tbody>" +
             "</table>";
-        $('div#header').append(row);
+        $('div.header').html(row);
 
         $('div#sessionDuration_' + connectionId).countdown({
             since: sessionStartTimestamp,
             compact: true,
             layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
-            format: 'yowdhMS'
+            format: 'yowdhMS',
+            onTick: checkTimerStyling
         });
         $('div#stepDuration_' + connectionId).countdown({
             since: nodeStartTimestamp,
             compact: true,
             layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
-            format: 'yowdhMS'
+            format: 'yowdhMS',
+            onTick: checkTimerStyling
         });
         document.title = "SAMS - " + agentName + " (" + attUID + ")";
         myHub.server.pullSASHAScreenshot(connectionId);
@@ -86,7 +88,8 @@
         $('img#SASHAScreenshot').show();
         screenshotTime = new Date().toString();
         screenshotTime = toLocalTime(screenshotTime);
-        $('div#screenshotInfo').html("SCREENSHOT TAKEN: " + screenshotTime);
+        $('div.screenshotInfo').html(screenshotTime).removeClass('hidden');
+        $('div.screenshot').removeClass('pending');
         setTimeout(function () {
             myHub.server.pullSASHAScreenshot(window.SASHAClientId);
         }, 20000);
@@ -104,7 +107,8 @@
                 since: nodeStartTimestamp,
                 compact: true,
                 layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
-                format: 'yowdhMS'
+                format: 'yowdhMS',
+                onTick: checkTimerStyling
             });
         }
     };
@@ -157,3 +161,12 @@ getURLVars = function () {
     }
     return vars;
 };
+
+// Add Styling on Timer if over threshold
+checkTimerStyling = function (periods) {
+    if ($.countdown.periodsToSeconds(periods) > 300) {
+        $(this).addClass('highlightDuration');
+    } else {
+        $(this).removeClass('highlightDuration');
+    }
+}

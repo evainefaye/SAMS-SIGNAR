@@ -58,9 +58,20 @@
     <script src="Scripts/JavaScript.js"></script>
 </head>
 <body>
-    <div id="header"></div>
+    <div class="header text-center"><span class="data">RETRIEVING INFORMATION...</span></div>
     <br />
-    <div id="screenshotInfo" class="center text-center">PENDING SCREENSHOT</div>
-    <img class="screenshot center" id="SASHAScreenshot" />
+    <div class="skillGroup">
+        <div id="skillGroupInfo"><span class="data">RETRIEVING INFORMATION...</span></div> 
+    </div>
+    <div class="row">
+        <div class="col pending">
+            <div class="screenshotInfo center text-center hidden"></div>
+            <img class="screenshot center" id="SASHAScreenshot" />
+        </div>
+        <div class="col pending">
+            <div class="dictionaryInfo center text-center hidden"></div>
+            <img class="dictionary center" id="SASHADictionary" />
+        </div>
+    </div>
  </body>
 </html>

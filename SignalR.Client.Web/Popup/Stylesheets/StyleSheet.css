@@ -4,6 +4,14 @@
 
 table {
     border-collapse: collapse;
+    table-layout: fixed;
+    white-space: nowrap;
+    width: 100%;
+}
+
+table tr, td {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .center {
@@ -14,16 +22,76 @@ table {
 .screenshot {
     display: block;
     margin: auto;
-    width: 950px;
-    max-width: 950px;
+    width: 100%;
+    max-width: 100%;
+}
+
+.screenshotInfo {
+    float: left;
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    z-index: 1000;
+    background-color: #92AD40;
+    padding: 3px;
+    color: #FFFFFF;
+    font-weight: bold;
 }
 
 .data {
     font-weight: bold;
+    padding-left: 1em;
 }
 
 .noborder, .noborder tr, .noborder th, .noborder.td {
     border-collapse: collapse;
     border: none;
     width: 100%;
+}
+
+.row {
+    display: flex; /* equal height of the children */
+    margin: 3px;
+}
+
+.col {
+    flex: 1; /* additionally, equal width */
+    padding: 1em;
+    border: solid;
+    width: 50%;
+    max-width: 50%;
+    margin: 3px;
+    position: relative;
+    height: 335px;
+}
+
+.pending {
+    background-image: url(Images/loading.gif);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.header {
+    padding: 3em;
+    background-color: padding: 3em;
+    color: #ffffff;
+    background-color: #0c2577;
+}
+
+.skillGroup {
+    text-transform: uppercase;
+    background-color: #0547ac;
+    color: #ffffff;
+    margin: 3px;
+    padding: 5px;
+    border: solid;
+    text-align: center;
+}
+
+.hidden {
+    display: none;
+}
+
+.highlightDuration {
+    color: #ff0000;
 }

@@ -43,6 +43,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Popup\Stylesheets\Images\loading.gif" />
     <Content Include="Popup\index.html" />
     <Content Include="packages.config" />
     <Content Include="Popup\Scripts\dictionary.js" />

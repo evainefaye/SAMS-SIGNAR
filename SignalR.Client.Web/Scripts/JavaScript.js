@@ -151,6 +151,10 @@
         $('table tbody tr').not('.group-header').off('dblclick').on('dblclick', function () {
             id = $(this).attr('connectionId');
             winName = "window_" + id;
+            if (typeof windowManager[winName] != "undefined") {
+                win = windowManager[winName];
+                win.close();
+            }
             windowManager[winName] = window.open("/popup/index.html?id=" + id, winName);
         });
     };
