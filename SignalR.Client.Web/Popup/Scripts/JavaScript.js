@@ -41,7 +41,7 @@
         sessionStartTime = toLocalTime(sessionStartTime);
         nodeStartTimestamp = new Date(nodeStartTime);
         nodeStartTime = toLocalTime(nodeStartTime);
-        if (skillGroup === null || skillGroup == "null" || skillGroup == "") {
+        if (skillGroup === null || skillGroup === "null" || skillGroup === "") {
             skillGroup = "UNKNOWN";
         }
         row = "<table class='noborder center'>" +

@@ -30,7 +30,7 @@ $(document).ready(function () {
     $('a#monitorURL').attr('href', monitorURL);
 
     $('button#toggleDebug').off('click').on('click', function () {
-        if ($('ul#activity').css('display') != 'none') {
+        if ($('ul#activity').css('display') !== 'none') {
             $('ul#activity').hide();
             $('button#toggleDebug').html("Show Debug Information");
         } else {
@@ -103,19 +103,19 @@ showRegisterSASHASession = function () {
         agentName = $.trim($('input#agentName').val()).toUpperCase();
         loc = $.trim($('input#location').val()).toUpperCase();
        smpSessionId = $.trim($('input#smpSessionId').val()).toUpperCase();
-        if (attUID == "") {
+        if (attUID === "") {
             $('input#attUID').addClass("error");
         }
-        if (agentName == "") {
+        if (agentName === "") {
             $('input#agentName').addClass("error");
         }
-        if (loc == "") {
+        if (loc === "") {
             $('input#location').addClass("error");
         }
-        if (smpSessionId == "") {
+        if (smpSessionId === "") {
             $('input#smpSessionId').addClass("error");
         }
-        if (attUID == "" || agentName == "" || loc == "" || smpSessionId == "") {
+        if (attUID === "" || agentName === "" || loc === "" || smpSessionId === "") {
             return false;
         }
         myHub.server.registerSASHASession(attUID, agentName, loc, smpSessionId);
@@ -135,16 +135,16 @@ showStartSASHAFlow = function () {
         skillGroup = $.trim($('input#skillGroup').val()).toUpperCase();
         flowName = $.trim($('input#flowName').val()).toUpperCase();
         stepName = $.trim($('input#stepName').val()).toUpperCase();
-        if (skillGroup == "") {
+        if (skillGroup === "") {
             $('input#skillGroup').addClass('error');
         }
-        if (flowName == "") {
+        if (flowName === "") {
             $('input#flowName').addClass('error');
         }
-        if (stepName == "") {
+        if (stepName === "") {
             $('input#stepname').addClass('error');
         }
-        if (skillGroup == "" || flowName == "" || stepName == "") {
+        if (skillGroup === "" || flowName === "" || stepName === "") {
             return false;
         }
         myHub.server.startSASHAFlow(skillGroup, flowName, stepName);
@@ -165,13 +165,13 @@ showUpdateNodeInfo = function () {
         $('.error').removeClass('error');
         flowName = $.trim($('input.flowName').val()).toUpperCase();
         stepName = $.trim($('input.stepName').val()).toUpperCase();
-        if (flowName == "") {
+        if (flowName === "") {
             $('input.flowName').addClass('error');
         }
-        if (stepName == "") {
+        if (stepName === "") {
             $('input.stepname').addClass('error');
         }
-        if (flowName == "" || stepName == "") {
+        if (flowName === "" || stepName === "") {
             return false;
         }
         myHub.server.updateNodeInfo(flowName, stepName);

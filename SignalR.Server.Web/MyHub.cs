@@ -96,6 +96,12 @@ namespace SignalR.Server.Web
             string smpSessionId = UserInfo.smpSessionId;
             string sessionStartTime = DateTime.UtcNow.ToString("o");
             string nodeStartTime = DateTime.UtcNow.ToString("o");
+            if (skillGroup == null || skillGroup == "null" || skillGroup == "")
+            {
+                skillGroup = "UNKNOWN";
+            }
+            Groups.Add(connectionId, skillGroup);
+            Groups.Add(connectionId, locationCode);
             UserInfo.skillGroup = skillGroup;
             UserInfo.sessionStartTime = sessionStartTime;
             UserInfo.flowName = flowName;
