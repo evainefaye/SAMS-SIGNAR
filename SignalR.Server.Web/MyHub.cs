@@ -178,10 +178,10 @@ namespace SignalR.Server.Web
             Clients.Client(SASHAConnectionId).requestSASHADictionary(connectionId);
         }
 
-        public void ReceiveSASHADictionary(string MonitorConnectionId, string image)
+        public void ReceiveSASHADictionary(string MonitorConnectionId, string dictionary)
         {
             string connectionId = Context.ConnectionId;
-            Clients.Client(MonitorConnectionId).pushSASHADictionary(image);
+            Clients.Client(MonitorConnectionId).pushSASHADictionary(dictionary);
         }
 
         public void RequestStalledSession(string connectionId)

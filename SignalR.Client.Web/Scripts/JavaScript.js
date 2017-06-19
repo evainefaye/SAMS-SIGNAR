@@ -30,7 +30,7 @@
     // Initialize variables
     disconnectNotified = false;
     myHub = $.connection.myHub;
-
+    
     // If you close this window, then use the window manager to locate and close and detail windows opened by this application
     $(window).on('unload', function () {
         $.each(windowManager, function (key) {
@@ -147,7 +147,7 @@
             $('a[skillGroup="ALLSESSIONS"] span').html(userCount);
         }
 
-        // Update on doubleclick events to include new row
+        // Update on doubleclick events to launch detail window
         $('table tbody tr').not('.group-header').off('dblclick').on('dblclick', function () {
             id = $(this).attr('connectionId');
             winName = "window_" + id;

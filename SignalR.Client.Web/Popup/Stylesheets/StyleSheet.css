@@ -38,6 +38,24 @@ table tr, td {
     font-weight: bold;
 }
 
+.dictionary {
+    max-height: 320px;
+    overflow-y: auto;
+
+}
+
+.dictionaryInfo {
+    float: left;
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    z-index: 1000;
+    background-color: #92AD40;
+    padding: 3px;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+
 .data {
     font-weight: bold;
     padding-left: 1em;
@@ -57,7 +75,6 @@ table tr, td {
 .col {
     flex: 1; /* additionally, equal width */
     padding: 1em;
-    border: solid;
     width: 50%;
     max-width: 50%;
     margin: 3px;

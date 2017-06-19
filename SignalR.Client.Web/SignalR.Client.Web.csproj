@@ -43,20 +43,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Popup\Images\arrow_refresh.png" />
+    <Content Include="Popup\Stylesheets\dictionary.css" />
+    <Content Include="Popup\Stylesheets\Images\array.png" />
+    <Content Include="Popup\Stylesheets\Images\date.png" />
     <Content Include="Popup\Stylesheets\Images\loading.gif" />
     <Content Include="Popup\index.html" />
     <Content Include="packages.config" />
-    <Content Include="Popup\Scripts\dictionary.js" />
     <Content Include="Popup\Scripts\JavaScript.js" />
     <Content Include="Popup\Scripts\jquery.cookie.js" />
-    <Content Include="Popup\Scripts\jquery.layout.js" />
     <Content Include="Popup\Scripts\jquery.treeview.js" />
     <Content Include="Popup\Stylesheets\Images\ajax-loader.gif" />
     <Content Include="Popup\Stylesheets\Images\file.gif" />
     <Content Include="Popup\Stylesheets\Images\folder-closed.gif" />
     <Content Include="Popup\Stylesheets\Images\folder.gif" />
+    <Content Include="Popup\Stylesheets\Images\map.png" />
     <Content Include="Popup\Stylesheets\Images\minus.gif" />
+    <Content Include="Popup\Stylesheets\Images\number.png" />
+    <Content Include="Popup\Stylesheets\Images\package.png" />
     <Content Include="Popup\Stylesheets\Images\plus.gif" />
+    <Content Include="Popup\Stylesheets\Images\string.png" />
     <Content Include="Popup\Stylesheets\Images\treeview-black-line.gif" />
     <Content Include="Popup\Stylesheets\Images\treeview-black.gif" />
     <Content Include="Popup\Stylesheets\Images\treeview-default-line.gif" />
@@ -247,7 +253,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Images\" />
-    <Folder Include="Popup\Images\" />
     <Folder Include="Stylesheets\Images\" />
   </ItemGroup>
   <PropertyGroup>

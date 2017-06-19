@@ -75,6 +75,7 @@
         });
         document.title = "SAMS - " + agentName + " (" + attUID + ")";
         myHub.server.pullSASHAScreenshot(connectionId);
+        myHub.server.pullSASHADictionary(connectionId);
     };
 
     // Close the window
@@ -84,8 +85,8 @@
 
     // Display SASHA screenshot
     myHub.client.pushSASHAScreenshot = function (img) {
-        $('img#SASHAScreenshot').attr('src', img);
-        $('img#SASHAScreenshot').show();
+        $('img#SASHAScreenshot').attr('src', img).show();
+        $('img#SASHAScreenshot').parent().css('background-image', 'none');
         screenshotTime = new Date().toString();
         screenshotTime = toLocalTime(screenshotTime);
         $('div.screenshotInfo').html(screenshotTime).removeClass('hidden');
@@ -94,6 +95,23 @@
             myHub.server.pullSASHAScreenshot(window.SASHAClientId);
         }, 20000);
     };
+
+    // Display SASHA Dictionary
+    myHub.client.pushSASHADictionary = function (dictionary) {
+        $('ul#dict').html(dictionary);
+        var dictionaryTree = $('ul#dict').treeview({
+            collapsed: true,
+            persist: "cookie",
+            control: "#sidetreecontrol",
+            cookieId: "treeview_" + myHub.connection.id
+        });
+        $('div#SASHADictionary').parent().css('background-image', 'none');
+        dictionaryTime = new Date().toString();
+        dictionaryTime = toLocalTime(dictionaryTime);
+        $('div.dictionaryInfo').html(dictionaryTime).removeClass('hidden');
+        $('div.dictionary').removeClass('pending hidden');
+    };
+
 
     myHub.client.updateNodeInfo = function (connectionId, flowName, nodeName, nodeStartTime) {
         if (connectionId === window.SASHAClientId) {
@@ -169,4 +187,12 @@ checkTimerStyling = function (periods) {
     } else {
         $(this).removeClass('highlightDuration');
     }
-}
+};
+
+reloadDictionary = function () {
+    $("ul#dict").empty();
+    $('div#SASHADictionary').parent().css('background-image', 'url(Stylesheets/Images/loading.gif)');
+    $('div.dictionaryInfo').html(dictionaryTime).addClass('hidden');
+    $('div.dictionary').addClass('pending hidden');
+    myHub.server.pullSASHADictionary(window.SASHAClientId);
+};
