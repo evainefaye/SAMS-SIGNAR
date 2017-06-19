@@ -64,6 +64,13 @@ $(document).ready(function () {
         });
     };
 
+
+    // Request SASHA Dictionary 
+    myHub.client.requestSASHADictionary = function (connectionId) {
+        dictionary = '<ul><li expr="activityLogger" class="expandable"><div class="hitarea expandable-hitarea"></div><span onclick="itemClicked(this);" title="Object" class="bean">activityLogger</span><ul style="display: none;"></ul></li><li expr="Address" class="expandable"><div class="hitarea expandable-hitarea"></div><span onclick="itemClicked(this);" title="String" class="string">Address</span><ul style="display: none;"><li class="last"><span class="value" title="String">""</span></li></ul></li></ul>';
+        myHub.server.receiveSASHADictionary(connectionId, dictionary);
+    };
+
     //Start the hub then show the first screen
     $.connection.hub.start()
         .done(showRegisterSASHASession);

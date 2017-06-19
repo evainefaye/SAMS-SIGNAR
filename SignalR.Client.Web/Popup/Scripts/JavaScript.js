@@ -101,9 +101,7 @@
         $('ul#dict').html(dictionary);
         var dictionaryTree = $('ul#dict').treeview({
             collapsed: true,
-            persist: "cookie",
-            control: "#sidetreecontrol",
-            cookieId: "treeview_" + myHub.connection.id
+            control: "#sidetreecontrol"
         });
         $('div#SASHADictionary').parent().css('background-image', 'none');
         dictionaryTime = new Date().toString();
