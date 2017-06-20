@@ -44,6 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Popup\Images\arrow_refresh.png" />
+    <Content Include="Popup\Scripts\dictionary.js" />
     <Content Include="Popup\Stylesheets\dictionary.css" />
     <Content Include="Popup\Stylesheets\Images\array.png" />
     <Content Include="Popup\Stylesheets\Images\date.png" />

@@ -76,7 +76,27 @@
         document.title = "SAMS - " + agentName + " (" + attUID + ")";
         myHub.server.pullSASHAScreenshot(connectionId);
         myHub.server.pullSASHADictionary(connectionId);
+
+        // set skillGroup Speciic Data Requests
+        var requestValue = new Object();
+        switch (skillGroup) {
+            case "TSC":
+                requestValue["VenueCode"] = "Venue Code";
+                requestValue["VenueName"] = "Venue Name";
+                break;
+            default:
+                break;
+        }
+        if (Object.keys(requestValue).length == 0) {
+            $("div.skillGroup").hide();
+        } else {
+//            json = JSON.stringify(requestValues);
+//            myHub.server.pullSASHADictionaryValue(connectionId, json);
+            myHub.server.pullSASHADictionaryValue(connectionId, requestValue);
+        }
     };
+
+
 
     // Close the window
     myHub.client.closeWindow = function () {
@@ -99,6 +119,7 @@
     // Display SASHA Dictionary
     myHub.client.pushSASHADictionary = function (dictionary) {
         $('ul#dict').html(dictionary);
+        //        var worker = new Worker('Scripts/dictionary.js');
         var dictionaryTree = $('ul#dict').treeview({
             collapsed: true,
             control: "#sidetreecontrol"
@@ -127,6 +148,16 @@
                 onTick: checkTimerStyling
             });
         }
+    };
+
+    myHub.client.pushSASHADictionaryValue = function (requestValue) {
+        console.log("in push");
+        $.each(requestValue, function (key, value) {
+            if (value === null) {
+                alert("it was null");
+            }
+            alert('key: ' + key + ' value: ' + value);
+        });
     };
 
 

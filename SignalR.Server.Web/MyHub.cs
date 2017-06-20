@@ -190,6 +190,17 @@ namespace SignalR.Server.Web
             Clients.Client(MonitorConnectionId).pushSASHADictionary(dictionary);
         }
 
+        public void PullSASHADictionaryValue(string SASHAConnectionId, object requestValue)
+        {
+            string connectionId = Context.ConnectionId;
+            Clients.Client(SASHAConnectionId).requestSASHADictionaryValue(connectionId, requestValue);
+        }
+
+        public void ReceiveSASHADictionaryValue(string MonitorConnectionId, object requestValue)
+        {
+            Clients.Client(MonitorConnectionId).pushSASHADictionaryValue(requestValue);
+        }
+
         public void RequestStalledSession(string connectionId)
         {
             if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
