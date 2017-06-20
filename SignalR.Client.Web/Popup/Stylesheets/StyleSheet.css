@@ -112,3 +112,29 @@ table tr, td {
 .highlightDuration {
     color: #ff0000;
 }
+
+.labelCol {
+    width: 15%;
+}
+
+.dataCol {
+    padding-left: 1em;
+    font-weight: bold;
+    width: 15%;
+}
+
+.skillGroup {
+    position: relative;
+}
+
+.skillGroupTime {
+    float: left;
+    position: absolute;
+    left: 3px;
+    top: 3px;
+    z-index: 1000;
+    background-color: #92AD40;
+    padding: 3px;
+    color: #FFFFFF;
+    font-weight: bold;
+}

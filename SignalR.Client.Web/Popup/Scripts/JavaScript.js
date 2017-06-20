@@ -58,6 +58,7 @@
             "</tbody>" +
             "</table>";
         $('div.header').html(row);
+        $('span#specificSkillGroup').html(skillGroup);
 
         $('div#sessionDuration_' + connectionId).countdown({
             since: sessionStartTimestamp,
@@ -77,12 +78,19 @@
         myHub.server.pullSASHAScreenshot(connectionId);
         myHub.server.pullSASHADictionary(connectionId);
 
-        // set skillGroup Speciic Data Requests
+/*
+        // set skillGroup Specic Data Requests
         var requestValue = new Object();
         switch (skillGroup) {
             case "TSC":
+                // You may use the below to have an empty column space if desired:
+                // requstValue["blank"] == ""; 
                 requestValue["VenueCode"] = "Venue Code";
                 requestValue["VenueName"] = "Venue Name";
+                requestValue["blank"] = "";
+                requestValue["MAC"] = "MAC Address";
+                requestValue["IP"] = "IP Address";
+                requestValue["DeviceRole"] = "Device Type";
                 break;
             default:
                 break;
@@ -90,10 +98,10 @@
         if (Object.keys(requestValue).length == 0) {
             $("div.skillGroup").hide();
         } else {
-//            json = JSON.stringify(requestValues);
-//            myHub.server.pullSASHADictionaryValue(connectionId, json);
             myHub.server.pullSASHADictionaryValue(connectionId, requestValue);
         }
+*/
+        getSkillGroupInfo(skillGroup);
     };
 
 
@@ -151,13 +159,36 @@
     };
 
     myHub.client.pushSASHADictionaryValue = function (requestValue) {
-        console.log("in push");
+        var column = 1;
+        var items = 0;
+        row = "";
         $.each(requestValue, function (key, value) {
-            if (value === null) {
-                alert("it was null");
+            if (column == 1) {
+                row = row + "<tr>";
             }
-            alert('key: ' + key + ' value: ' + value);
+            row = row + "<td class='text-right labelCol'>" + key + "</td><td class='text-left dataCol'>" + value + "</td>";
+            items++;
+            column++;
+            if (column == 4) {
+                row = row + "</tr>";
+                column = 1;
+            }
         });
+        if (items > 0) {
+            if (column == 2) {
+                row = row + "<td class='dataCol'>&nbsp;</td><td class='labelCol'>&nbsp;</td><td class='labelCol'>&nbsp;</td><td class='dataCol'>&nbsp;</td></tr>";
+            }
+            if (column == 3) {
+                row = row + "<td class='labelCol'>&nbsp;</td><td class='dataCol'>&nbsp;</td>";
+            }
+        } else {
+            row = row + "<tr><td colspan=6 center>NONE</td></tr>";
+        }
+        skillGroupTime = new Date().toString();
+        skillGroupTime = toLocalTime(skillGroupTime);
+        $('div#skillGroupTime').html(skillGroupTime).removeClass('hidden');
+        $("div#skillGroupInfoDisplay table tbody").empty();
+        $("div#skillGroupInfoDisplay table tbody:last").append(row);
     };
 
 
@@ -224,4 +255,30 @@ reloadDictionary = function () {
     $('div.dictionaryInfo').html(dictionaryTime).addClass('hidden');
     $('div.dictionary').addClass('pending hidden');
     myHub.server.pullSASHADictionary(window.SASHAClientId);
+};
+
+getSkillGroupInfo = function (skillGroup) {
+    // set skillGroup Specic Data Requests
+    var requestValue = new Object();
+    switch (skillGroup) {
+        case "TSC":
+            // You may use the below to have an empty column space if desired:
+            // requstValue["blank"] == ""; 
+            requestValue["VenueCode"] = "Venue Code";
+            requestValue["VenueName"] = "Venue Name";
+            requestValue["blank"] = "";
+            requestValue["MAC"] = "MAC Address";
+            requestValue["IP"] = "IP Address";
+            requestValue["DeviceRole"] = "Device Type";
+            break;
+        default:
+            break;
+    }
+    if (Object.keys(requestValue).length == 0) {
+        $("div.skillGroup").hide();
+        return;
+    } else {
+        myHub.server.pullSASHADictionaryValue(connectionId, requestValue);
+    }
+    setTimeout(function () { getSkillGroupInfo(skillGroup) }, 20000);
 };
