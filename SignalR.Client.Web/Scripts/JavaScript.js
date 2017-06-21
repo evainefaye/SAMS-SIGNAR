@@ -53,11 +53,18 @@
                 '</li>';
             $('ul#Tabs').append(row);
             row = '<div id="' + skillGroup + '" class="tab-pane">' +
+                '<div class="buttonrow">' +
+                '<span class="buttons">' +
+                'GROUP BY: ' +
+                '<input type="radio" name="' + skillGroup + '" class="groupOption" value="none" checked="checked">NONE' +
+                '<input type="radio" name="' + skillGroup + '" class="groupOption" value="agentname">AGENT NAME' +
+                '</span>' + 
+                '</div> ' +
                 '<table class="center hover-highlight serviceline ' + skillGroup + '" >' +
                 '<thead>' +
                 '<tr>' +
                 '<th class="text-center attUID">ATT<br />UID</th>' +
-                '<th class="text-center agentName">AGENT NAME</th>' +
+                '<th class="text-center agentName group-text">AGENT NAME</th>' +
                 '<th class="text-center sessionStartTime" >SESSION<br />START TIME</th>' +
                 '<th class="text-center sessionDuration">SESSION<br />DURATION</th>' +
                 '<th class="text-center nodeStartTime sorter-false">NODE<br />START<br />TIME</th>' +
@@ -79,6 +86,28 @@
                 sortList: [[3, 0]],
                 sortReset: true,
                 widgets: ["zebra"]
+            });
+            // Create event or changing the group option button
+            $('.groupOption').off('change.groupOption').on('change.groupOption', function () {
+                value = $(this).val();
+                name = $(this).attr('name');
+                if (value == "none") {
+                    $('table.' + name).trigger('removeWidget', 'group');
+                }
+                if (value == "agentname") {
+                    $('table.' + name).trigger('removeWidget', 'group');
+                    $('table.' + name).data('tablesorter').widgets = ['group'];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_forceColumn = [1];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_enforceSort = false;
+                    $('table.' + name).trigger('applyWidgets');
+                }
+                if (value == "skillgroup") {
+                    $('table.' + name).trigger('removeWidget', 'group');
+                    $('table.' + name).data('tablesorter').widgets = ['group'];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_forceColumn = [6];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_enforceSort = false;
+                    $('table.' + name).trigger('applyWidgets');
+                }
             });
             // Resort the table anytime its tab is clicked
             $('a[data-toggle="tab"]').off('shown.bs.tab.resort').on('shown.tab.bs.resort', function(e) { 
@@ -118,6 +147,28 @@
                 + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '">' + nodeName + '</td>'
                 + '</tr>';
             $('table.ALLSESSIONS tbody:last').append(row);
+
+            $('[name="ALLSESSIONS].groupOption').off('change.groupOption').on('change.groupOption', function () {
+                value = $(this).val();
+                name = $(this).attr('name');
+                if (value == "none") {
+                    $('table.' + name).trigger('removeWidget', 'group');
+                }
+                if (value == "agentname") {
+                    $('table.' + name).trigger('removeWidget', 'group');
+                    $('table.' + name).data('tablesorter').widgets = ['group'];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_forceColumn = [1];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_enforceSort = false;
+                    $('table.' + name).trigger('applyWidgets');
+                }
+                if (value == "skillgroup") {
+                    $('table.' + name).trigger('removeWidget', 'group');
+                    $('table.' + name).data('tablesorter').widgets = ['group'];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_forceColumn = [6];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_enforceSort = false;
+                    $('table.' + name).trigger('applyWidgets');
+                }
+            });
 
             // Initialize Counters for the connection just added
             $('div[sessionDurationId="sessionDuration_' + connectionId + '"]').countdown({
@@ -269,6 +320,29 @@
             userCount = $('table.STALLEDSESSIONS tbody tr').not('.group-header').length;
             $('a[skillGroup="STALLEDSESSIONS"] span').html(userCount);
 
+            // Create event or changing the group option button
+            $('[name="STALLEDSESSIONS].groupOption').off('change.groupOption').on('change.groupOption', function () {
+                value = $(this).val();
+                name = $(this).attr('name');
+                if (value == "none") {
+                    $('table.' + name).trigger('removeWidget', 'group');
+                }
+                if (value == "agentname") {
+                    $('table.' + name).trigger('removeWidget', 'group');
+                    $('table.' + name).data('tablesorter').widgets = ['group'];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_forceColumn = [1];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_enforceSort = false;
+                    $('table.' + name).trigger('applyWidgets');
+                }
+                if (value == "skillgroup") {
+                    $('table.' + name).trigger('removeWidget', 'group');
+                    $('table.' + name).data('tablesorter').widgets = ['group'];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_forceColumn = [6];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_enforceSort = false;
+                    $('table.' + name).trigger('applyWidgets');
+                }
+            });
+
             // Trigger table to sort
             $('table.STALLEDSESSIONS').trigger('update');
         }
@@ -411,6 +485,14 @@ addCustomTabs = function () {
         '</li>';
     $('ul#Tabs').append(row);
     row = '<div id="ALLSESSIONS" class="tab-pane">' +
+        '<div class="buttonrow">' +
+        '<span class="buttons">' +
+        'GROUP BY: ' +
+        '<input type="radio" name="ALLSESSIONS" class="groupOption" value="none" checked="checked">NONE' +
+        '<input type="radio" name="ALLSESSIONS" class="groupOption" value="agentname">AGENT NAME' +
+        '<input type="radio" name="ALLSESSIONS" class="groupOption" value="skillgroup">SKILL GROUP' +
+        '</span>' + 
+        '</div> ' +
         '<table class="center groupable hover-highlight ALLSESSIONS">' +
         '<thead>' +
         '<tr>' +
@@ -436,11 +518,7 @@ addCustomTabs = function () {
     $('table.ALLSESSIONS').tablesorter({
         theme: "custom",
         sortReset: true,
-        widgets: ["zebra", "group"],
-        widgetOptions: {
-            group_collapsed: true,
-            group_forceColumn: [6]
-        }
+        widgets: ["zebra"],
     });
     $('a[data-toggle="tab"]').off('shown.bs.tab.resort').on('shown.tab.bs.resort', function (e) {
         var target = $(e.target).attr('skillGroup');
@@ -452,6 +530,14 @@ addCustomTabs = function () {
         '</li> ';
     $('ul#Tabs').append(row);
     row = '<div id="STALLEDSESSIONS" class="tab-pane">' +
+        '<div class="buttonrow">' +
+        '<span class="buttons">' + 
+        'GROUP BY: ' +
+        '<input type="radio" name="STALLEDSESSIONS" class="groupOption" value="none" checked="checked">NONE' +
+        '<input type="radio" name="STALLEDSESSIONS" class="groupOption" value="agentname">AGENT NAME' +
+        '<input type="radio" name="STALLEDSESSIONS" class="groupOption" value="skillgroup">SKILL GROUP' +
+        '</span>' +
+        '</div> ' +
         '<table class="center groupable hover-highlight STALLEDSESSIONS">' +
         '<thead>' +
         '<tr>' +
@@ -471,15 +557,33 @@ addCustomTabs = function () {
         '</table>' +
         '</div>';
     $('div#Contents').append(row);
+    // Create event or changing the group option button
+    $('.groupOption').off('change.groupOption').on('change.groupOption', function () {
+        value = $(this).val();
+        name = $(this).attr('name');
+        if (value == "none") {
+            $('table.' + name).trigger('removeWidget', 'group');
+        }
+        if (value == "agentname") {
+            $('table.' + name).trigger('removeWidget', 'group');
+            $('table.' + name).data('tablesorter').widgets = ['group'];
+            $('table.' + name).data('tablesorter').widgetOptions.group_forceColumn = [1];
+            $('table.' + name).data('tablesorter').widgetOptions.group_enforceSort = false;
+            $('table.' + name).trigger('applyWidgets');
+        }
+        if (value == "skillgroup") {
+            $('table.' + name).trigger('removeWidget', 'group');
+            $('table.' + name).data('tablesorter').widgets = ['group'];
+            $('table.' + name).data('tablesorter').widgetOptions.group_forceColumn = [6];
+            $('table.' + name).data('tablesorter').widgetOptions.group_enforceSort = false;
+            $('table.' + name).trigger('applyWidgets');
+        }
+    });
     // Make Table Sortable
     $('table.STALLEDSESSIONS').tablesorter({
         theme: "custom",
         sortReset: true,
-        widgets: ["zebra", "group"],
-        widgetOptions: {
-            group_collapsed: true,
-            group_forceColumn: [6]
-        }
+        widgets: ["zebra"],
     });
     // When tab is clicked, it should resort the table for it
     $('a[data-toggle="tab"]').off('shown.bs.tab.resort').on('shown.tab.bs.resort', function (e) {

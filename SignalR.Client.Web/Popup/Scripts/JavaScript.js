@@ -77,30 +77,6 @@
         document.title = "SAMS - " + agentName + " (" + attUID + ")";
         myHub.server.pullSASHAScreenshot(connectionId);
         myHub.server.pullSASHADictionary(connectionId);
-
-/*
-        // set skillGroup Specic Data Requests
-        var requestValue = new Object();
-        switch (skillGroup) {
-            case "TSC":
-                // You may use the below to have an empty column space if desired:
-                // requstValue["blank"] == ""; 
-                requestValue["VenueCode"] = "Venue Code";
-                requestValue["VenueName"] = "Venue Name";
-                requestValue["blank"] = "";
-                requestValue["MAC"] = "MAC Address";
-                requestValue["IP"] = "IP Address";
-                requestValue["DeviceRole"] = "Device Type";
-                break;
-            default:
-                break;
-        }
-        if (Object.keys(requestValue).length == 0) {
-            $("div.skillGroup").hide();
-        } else {
-            myHub.server.pullSASHADictionaryValue(connectionId, requestValue);
-        }
-*/
         getSkillGroupInfo(skillGroup);
     };
 
