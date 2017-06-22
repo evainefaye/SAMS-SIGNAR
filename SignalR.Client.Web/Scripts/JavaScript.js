@@ -98,6 +98,7 @@
                     $('table.' + name).trigger('removeWidget', 'group');
                     $('table.' + name).data('tablesorter').widgets = ['group'];
                     $('table.' + name).data('tablesorter').widgetOptions.group_forceColumn = [1];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_saveGroups = false;
                     $('table.' + name).data('tablesorter').widgetOptions.group_enforceSort = false;
                     $('table.' + name).trigger('applyWidgets');
                 }
@@ -105,6 +106,7 @@
                     $('table.' + name).trigger('removeWidget', 'group');
                     $('table.' + name).data('tablesorter').widgets = ['group'];
                     $('table.' + name).data('tablesorter').widgetOptions.group_forceColumn = [6];
+                    $('table.' + name).data('tablesorter').widgetOptions.group_saveGroups = false;
                     $('table.' + name).data('tablesorter').widgetOptions.group_enforceSort = false;
                     $('table.' + name).trigger('applyWidgets');
                 }
