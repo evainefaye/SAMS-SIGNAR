@@ -119,6 +119,10 @@ table tr .nodeName {
     color: #ff0000;
 }
 
+.warnWaitScreenDuration {
+    color: #FFFF00;
+}
+
 #serverStartTime {
     font-weight: bold;
 }

@@ -66,7 +66,7 @@
                 '<th class="text-center attUID">ATT<br />UID</th>' +
                 '<th class="text-center agentName group-text">AGENT NAME</th>' +
                 '<th class="text-center sessionStartTime" >SESSION<br />START TIME</th>' +
-                '<th class="text-center sessionDuration">SESSION<br />DURATION</th>' +
+                '<th class="text-center sessionDuration sorter-false">SESSION<br />DURATION</th>' +
                 '<th class="text-center nodeStartTime sorter-false">NODE<br />START<br />TIME</th>' +
                 '<th class="text-center nodeDuration sorter-false">NODE<br />DURATION</th>' +
                 '<th class="text-center flowName sorter-false">FLOW NAME</th>' +
@@ -83,7 +83,7 @@
             //  Make the added table sortable
             $('table.' + skillGroup).tablesorter({
                 theme: "custom",
-                sortList: [[3, 0]],
+                sortList: [[3,1]],
                 sortReset: true,
                 widgets: ["zebra"]
             });
@@ -130,9 +130,10 @@
                 + '<td class="text-center" nodeStartTimeId="nodeStartTime_' + connectionId + '">' + nodeStartTime + '</td>'
                 + '<td class="text-right"><div nodeDurationId="nodeDuration_' + connectionId + '"></div></td>'
                 + '<td class="text-left" flowNameId="flowName_' + connectionId + '">' + flowName + '</td>'
-                + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '">' + nodeName + '</td>'
+                + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '"><span class="nodeInfo">' + nodeName + '</span></td>'
                 + '</tr>';
             $('table.' + skillGroup + ' tbody:last').append(row);
+            $('table.' + skillGroup).trigger('update');
 
             // Also add to All Sessions tab.  New row defined here as that includes SkillGroup
             row = '<tr connectionId="' + connectionId + '">'
@@ -144,9 +145,10 @@
                 + '<td class="text-right"><div nodeDurationId="nodeDuration_' + connectionId + '"></div></td>'
                 + '<td class="text-center">' + skillGroup + '</td>'
                 + '<td class="text-left" flowNameId="flowName_' + connectionId + '">' + flowName + '</td>'
-                + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '">' + nodeName + '</td>'
+                + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '"><span class="nodeInfo">' + nodeName + '</span></td>'
                 + '</tr>';
             $('table.ALLSESSIONS tbody:last').append(row);
+            $('table.ALLSESSIONS').trigger('update');
 
             $('[name="ALLSESSIONS].groupOption').off('change.groupOption').on('change.groupOption', function () {
                 value = $(this).val();
@@ -177,7 +179,7 @@
                 layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
                 format: 'yowdhMS',
                 onTick: checkStalledSessions,
-                tickInterval: 5
+                tickInterval: 1
             });
             $('div[nodeDurationId="nodeDuration_' + connectionId + '"]').countdown({
                 since: nodeStartTimestamp,
@@ -185,7 +187,7 @@
                 layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
                 format: 'yowdhMS',
                 onTick: checkTimerStyling,
-                tickInterval: 5
+                tickInterval: 1
             });
             // Request the tables to resort
             $('table.' + skillGroup).trigger('update');
@@ -250,7 +252,7 @@
         // first remove any countdown to avoid javascript errors
         $('div[nodeDurationId="nodeDuration_' + connectionId + '"]').countdown('destroy');
         $('td[flowNameId="flowName_' + connectionId + '"]').html(flowName);
-        $('td[nodeNameId="nodeName_' + connectionId + '"]').html(nodeName);
+        $('td[nodeNameId="nodeName_' + connectionId + '"]').html("<span class='nodeInfo'>" + nodeName + "</span>");
         $('td[nodeStartTime="nodeStartTime_' + connectionId + '"]').html(nodeStartTime);
         // restart countdown
         $('div[nodeDurationId="nodeDuration_' + connectionId + '"]').countdown({
@@ -259,13 +261,14 @@
             layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
             format: 'yowdhMS',
             onTick: checkTimerStyling,
-            tickInterval: 5
+            tickInterval: 1
         });
     };
 
     // Restore the Active Tab 
     myHub.client.resetActiveTab = function (active) {
         $('a[skillGroup="' + active + '"]').click();
+        $('table.' + skillGroup).trigger('update');
     };
 
 
@@ -296,7 +299,7 @@
                 + '<td class="text-right"><div nodeDurationId="nodeDuration_' + connectionId + '"></div></td>'
                 + '<td class="text-center">' + skillGroup + '</td>'
                 + '<td class="text-left" flowNameId="flowName_' + connectionId + '">' + flowName + '</td>'
-                + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '">' + nodeName + '</td>'
+                + '<td class="text-left" nodeNameId="nodeName_' + connectionId + '"><span class="nodeInfo">' + nodeName + '</span></td>'
                 + '</tr>';
             $('table.STALLEDSESSIONS tbody:last').append(row);
             // initialize Countdown
@@ -306,7 +309,7 @@
                 layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
                 format: 'yowdhMS',
                 onTick: checkTimerStyling,
-                tickInterval: 5
+                tickInterval: 1
             });
             $('div[nodeDurationId="nodeDuration_' + connectionId + '"]').countdown({
                 since: nodeStartTimestamp,
@@ -314,7 +317,7 @@
                 layout: '{d<} {dn} {d1} {d>} {h<} {hnn} {sep} {h>} {mnn} {sep} {snn}',
                 format: 'yowdhMS',
                 onTick: checkTimerStyling,
-                tickInterval: 5
+                tickInterval: 1
             });
             // update user count
             userCount = $('table.STALLEDSESSIONS tbody tr').not('.group-header').length;
@@ -469,6 +472,18 @@ checkStalledSessions = function (periods) {
 
 // Add Styling on Timer if over threshold
 checkTimerStyling = function (periods) {
+    if ($.countdown.periodsToSeconds(periods) > 30) {
+        nodeInfo = $(this).parent().parent().find('span.nodeInfo');
+        if (nodeInfo.html().indexOf(" (WAIT SCREEN)") > 0) {
+//            nodeInfo.addClass('warnWaitScreenDuration');
+            $(this).addClass('warnWaitScreenDuration');
+            return;
+        } else {
+//            nodeInfo.removeClass("warnWaitScreenDuration");
+            $(this).removeClass('warnWaitScreenDuration');
+            return;
+        }
+    }
     if ($.countdown.periodsToSeconds(periods) > 300) {
         $(this).addClass('highlightDuration');
     } else {
@@ -479,7 +494,7 @@ checkTimerStyling = function (periods) {
 
 // Add Stalled Sessions and All Sessions tabs
 addCustomTabs = function () {
-    // Start bya dding All Sessions Tab
+    // Start by adding All Sessions Tab
     row = '<li class="pull-right" tabId="ALLSESSIONS">' +
         '<a class="nav-link" data-toggle="tab" skillGroup="ALLSESSIONS" href="#ALLSESSIONS">ALL SESSIONS (<span>0</span>)</a>' +
         '</li>';
@@ -498,7 +513,7 @@ addCustomTabs = function () {
         '<tr>' +
         '<th class="text-center attUID group-letter">ATT<br />UID</th>' +
         '<th class="text-center agentName group-text">AGENT NAME</th>' +
-        '<th class="text-center sessionStartTime sorter-false">SESSION<br />START TIME</th>' +
+        '<th class="text-center sessionStartTime">SESSION<br />START TIME</th>' +
         '<th class="text-center sessionDuration sorter-false">SESSION<br />DURATION</th>' +
         '<th class="text-center nodeStartTime sorter-false">NODE<br />START<br />TIME</th>' +
         '<th class="text-center nodeDuration sorter-false">NODE<br />DURATION</th>' +
@@ -514,10 +529,12 @@ addCustomTabs = function () {
     $('div#Contents').append(row);
     // Set ALL Sessions as default tab
     $('.nav-tabs a[skillGroup="ALLSESSIONS"]').tab('show');
+    $('table.ALLSESSIONS').trigger('update');
     // Make table sortable
     $('table.ALLSESSIONS').tablesorter({
         theme: "custom",
         sortReset: true,
+        sortList: [[3,1]],
         widgets: ["zebra"],
     });
     $('a[data-toggle="tab"]').off('shown.bs.tab.resort').on('shown.tab.bs.resort', function (e) {
@@ -543,7 +560,7 @@ addCustomTabs = function () {
         '<tr>' +
         '<th class="text-center attUID group-letter">ATT<br />UID</th>' +
         '<th class="text-center agentName group-text">AGENT NAME</th>' +
-        '<th class="text-center sessionStartTime sorter-false">SESSION<br />START TIME</th>' +
+        '<th class="text-center sessionStartTime">SESSION<br />START TIME</th>' +
         '<th class="text-center sessionDuration sorter-false">SESSION<br />DURATION</th>' +
         '<th class="text-center nodeStartTime sorter-false">NODE<br />START<br />TIME</th>' +
         '<th class="text-center nodeDuration sorter-false">NODE<br />DURATION</th>' +
@@ -582,6 +599,7 @@ addCustomTabs = function () {
     // Make Table Sortable
     $('table.STALLEDSESSIONS').tablesorter({
         theme: "custom",
+        sortList: [[3,1]],
         sortReset: true,
         widgets: ["zebra"],
     });
