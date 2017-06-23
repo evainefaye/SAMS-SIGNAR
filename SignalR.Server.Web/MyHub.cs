@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UniqueKey;
 using LoginInfo;
 
@@ -128,7 +129,7 @@ namespace SignalR.Server.Web
         public void RefreshSASHAConnections(string active)
         {
 //            ShowActivity("all", "Refreshing SASHA Connections");
-            foreach (KeyValuePair<string, UserInfo> User in Users)
+            foreach (KeyValuePair<string, UserInfo> User in Users.OrderBy(p => p.Value.sessionStartTime))
             {
                 if (User.Value.sessionStartTime != null)
                 {
@@ -160,7 +161,13 @@ namespace SignalR.Server.Web
                 UserInfo.flowName = flowName;
                 UserInfo.nodeName = nodeName;
                 UserInfo.nodeStartTime = nodeStartTime;
+                if (nodeName != "WAIT NODE")
+                {
+                    UserInfo.flowHistory.Add(flowName);
+                    UserInfo.nodeHistory.Add(nodeName);
+                }
                 Users[connectionId] = UserInfo;
+
             }
             Clients.All.updateNodeInfo(connectionId, flowName, nodeName, nodeStartTime);
             ShowActivity("all", "Updating Node: " + connectionId + "," + flowName + "," + nodeStartTime);
@@ -233,6 +240,10 @@ namespace SignalR.Server.Web
                 string nodeName = UserInfo.nodeName;
                 string nodeStartTime = UserInfo.nodeStartTime;
                 Clients.Caller.setClientDetail(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime);
+                for (var i = 0; i < UserInfo.flowHistory.Count; i++)
+                {
+                    Clients.Caller.dumpFlowHistory(UserInfo.flowHistory[i], UserInfo.nodeHistory[i]);
+                }
             }
             else
             {

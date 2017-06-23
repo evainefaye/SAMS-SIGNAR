@@ -167,7 +167,10 @@
         $("div#skillGroupInfoDisplay table tbody:last").append(row);
     };
 
-
+    myHub.client.dumpFlowHistory = function (flowName, nodeName) {
+        $('div.temporary').append(flowName + " " + nodeName);
+        console.log('flowName: ' + flowName + ' nodename: ' + nodeName);
+    };
     $.connection.hub.start()
         .done(function () {
             vars = getURLVars();

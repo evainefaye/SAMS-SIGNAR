@@ -476,7 +476,7 @@ checkStalledSessions = function (periods) {
 checkTimerStyling = function (periods) {
     if ($.countdown.periodsToSeconds(periods) > 30) {
         nodeInfo = $(this).parent().parent().find('span.nodeInfo');
-        if (nodeInfo.html().indexOf(" (WAIT SCREEN)") > 0) {
+        if (nodeInfo.html() == "WAIT SCREEN") {
 //            nodeInfo.addClass('warnWaitScreenDuration');
             $(this).addClass('warnWaitScreenDuration');
             return;

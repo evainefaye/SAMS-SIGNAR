@@ -16,7 +16,13 @@ namespace SignalR.Server.Web
         public string flowName;
         public string nodeName;
         public string nodeStartTime;
-
+        public List<string> flowHistory;
+        public List<string> nodeHistory;
+        public UserInfo()
+        {
+            this.flowHistory = new List<string>();
+            this.nodeHistory = new List<string>();
+        }
     }
 
     public class Users
