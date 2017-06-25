@@ -22,14 +22,6 @@ namespace SignalRServerSelfHost
             }
         }
     }
-    class Startup
-    {
-        public void Configuration(IAppBuilder app)
-        {
-            app.UseCors(CorsOptions.AllowAll);
-            app.MapSignalR();
-        }
-    }
     public class MyHub : Hub
     {
         public void Send(string name, string message)

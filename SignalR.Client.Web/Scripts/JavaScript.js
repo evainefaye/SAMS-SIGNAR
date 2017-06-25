@@ -1,6 +1,5 @@
 ﻿$(document).ready(function () {
 
-    document.title = "SAMS - SASHA ACTIVE MONITORING SYSTEM";
     windowManager = new Object();
 
     hostname = window.location.hostname.split(".")[0];
@@ -23,6 +22,8 @@
             version = "PRODUCTION";
             break;
     }
+
+    document.title = "SAMS - " + version + " SASHA ACTIVE MONITORING SYSTEM";
 
     // Set the Version Type
     $('span#version').html(version);
@@ -483,7 +484,6 @@ checkTimerStyling = function (periods) {
         } else {
 //            nodeInfo.removeClass("warnWaitScreenDuration");
             $(this).removeClass('warnWaitScreenDuration');
-            return;
         }
     }
     if ($.countdown.periodsToSeconds(periods) > 300) {

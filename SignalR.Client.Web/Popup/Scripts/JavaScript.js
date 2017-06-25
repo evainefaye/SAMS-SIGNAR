@@ -29,11 +29,17 @@
     disconnectNotified = false;
     myHub = $.connection.myHub;
 
-    // Default Client showActivity Method
-    myHub.client.showActivity = function (timestamp, text) {
-        text = toDisplayTimestamp(timestamp) + text;
-        $('<li>' + text + '</li>').hide().prependTo('ul#activity').slideDown('slow');
-    };
+    $('#flowHistoryTree').hide();
+    $('.flowHistoryWrapper').off('click.showHistory').on('click.showHistory', function () {
+        $('#flowHistoryTree').toggle(400, function () {
+            if ($('#flowHistoryTree').is(':visible')) {
+                $('#flowHistoryWrapperStatus').html("HIDE ");
+            } else {
+                $('#flowHistoryWrapperStatus').html("SHOW ");
+            }
+        });
+    });
+
 
     // Retrieves the client information
     myHub.client.setClientDetail = function (connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime) {
@@ -106,7 +112,7 @@
         //        var worker = new Worker('Scripts/dictionary.js');
         var dictionaryTree = $('ul#dict').treeview({
             collapsed: true,
-            control: "#sidetreecontrol"
+ //           control: "#sidetreecontrol"
         });
         $('div#SASHADictionary').parent().css('background-image', 'none');
         dictionaryTime = new Date().toString();
@@ -167,10 +173,34 @@
         $("div#skillGroupInfoDisplay table tbody:last").append(row);
     };
 
-    myHub.client.dumpFlowHistory = function (flowName, nodeName) {
-        $('div.temporary').append(flowName + " " + nodeName);
-        console.log('flowName: ' + flowName + ' nodename: ' + nodeName);
+    myHub.client.dumpHistory = function (flowHistory, nodeHistory) {
+        var lastFlowName = "";
+        var historyJSON = '[';
+        for (i = 0; i < flowHistory.length; i++) {
+            flowName = flowHistory[i];
+            nodeName = nodeHistory[i];
+            if (i == 0) {
+                historyJSON = historyJSON + '{"name":"' + flowName + '", "children":[{"name":"' + nodeName + '"}';
+                lastFlowName = flowName;
+            }
+            if (i > 0) {
+                if (flowName == lastFlowName) {
+                    historyJSON = historyJSON + ', {"name":"' + nodeName + '"}';
+                    lastFlowName = flowName;
+                } else {
+                    historyJSON = historyJSON + ']}, {"name":"' + flowName + '", "children":[{"name":"' + nodeName + '"}';
+                    lastFlowName = flowName;
+                }
+            }
+        }
+        historyJSON = historyJSON + "]}]";
+        json = $.parseJSON(historyJSON);
+        $('#flowHistoryTree').tree({
+            data: json,
+            autoOpen: true
+        });
     };
+
     $.connection.hub.start()
         .done(function () {
             vars = getURLVars();

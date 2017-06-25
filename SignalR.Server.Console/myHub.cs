@@ -5,13 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniqueKey;
-using LoginInfo;
 
-namespace SignalR.Server.Web
+
+namespace SignalR.Server.Console
 {
     public class MyHub : Hub
-    {
 
+    {
         private static Dictionary<string, UserInfo> Users = new Dictionary<string, UserInfo>();
         public static string serverStarted = DateTime.UtcNow.ToString("o");
 
@@ -33,30 +33,30 @@ namespace SignalR.Server.Web
             }
         }
 
-//        // Sets the UserName and displays old (if previously set) and new name
-//        public void SetUserName(string newName)
-//        {
-//            newName = newName.Trim().ToLower();
-//            // Do Nothing if Username was empty
-//            if (String.IsNullOrEmpty(newName)) 
-//            {
-//                return;
-//            }
-//            // Get Key for Dictionary Item
-//            string connectionId = Context.ConnectionId;
-//            if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
-//            {
-//                string oldName = UserInfo.attUID;
-//                if (String.IsNullOrEmpty(oldName))
-//                {
-//                    ShowActivity("others", "User " + oldName + " now known as  " + newName);
-//                    ShowActivity("caller", "You will now be known as  " + newName);
-//                }
-//            }
-//            Clients.Caller.updateUserName(newName); // Update UserName 
-//            UserInfo.attUID = newName;
-//            Users[connectionId] = UserInfo;
-//        }
+        //        // Sets the UserName and displays old (if previously set) and new name
+        //        public void SetUserName(string newName)
+        //        {
+        //            newName = newName.Trim().ToLower();
+        //            // Do Nothing if Username was empty
+        //            if (String.IsNullOrEmpty(newName)) 
+        //            {
+        //                return;
+        //            }
+        //            // Get Key for Dictionary Item
+        //            string connectionId = Context.ConnectionId;
+        //            if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
+        //            {
+        //                string oldName = UserInfo.attUID;
+        //                if (String.IsNullOrEmpty(oldName))
+        //                {
+        //                    ShowActivity("others", "User " + oldName + " now known as  " + newName);
+        //                    ShowActivity("caller", "You will now be known as  " + newName);
+        //                }
+        //            }
+        //            Clients.Caller.updateUserName(newName); // Update UserName 
+        //            UserInfo.attUID = newName;
+        //            Users[connectionId] = UserInfo;
+        //        }
 
         // Return UserName when you submit the connectionId
         public string GetAgentNameByConnectionId(string connectionId)
@@ -128,7 +128,7 @@ namespace SignalR.Server.Web
         // Reload the table
         public void RefreshSASHAConnections(string active)
         {
-//            ShowActivity("all", "Refreshing SASHA Connections");
+            //            ShowActivity("all", "Refreshing SASHA Connections");
             foreach (KeyValuePair<string, UserInfo> User in Users.OrderBy(p => p.Value.sessionStartTime))
             {
                 if (User.Value.sessionStartTime != null)
@@ -227,7 +227,7 @@ namespace SignalR.Server.Web
 
         public void RequestClientDetail(string connectionId)
         {
-//            string connectionId = Context.ConnectionId;
+            //            string connectionId = Context.ConnectionId;
             if (Users.TryGetValue(connectionId, out UserInfo UserInfo))
             {
                 string attUID = UserInfo.attUID;
@@ -240,7 +240,10 @@ namespace SignalR.Server.Web
                 string nodeName = UserInfo.nodeName;
                 string nodeStartTime = UserInfo.nodeStartTime;
                 Clients.Caller.setClientDetail(connectionId, attUID, agentName, locationCode, smpSessionId, skillGroup, sessionStartTime, flowName, nodeName, nodeStartTime);
-                Clients.Caller.dumpHistory(UserInfo.flowHistory, UserInfo.nodeHistory);
+                for (var i = 0; i < UserInfo.flowHistory.Count; i++)
+                {
+                    Clients.Caller.dumpFlowHistory(UserInfo.flowHistory[i], UserInfo.nodeHistory[i]);
+                }
             }
             else
             {
@@ -251,22 +254,22 @@ namespace SignalR.Server.Web
 
         public override Task OnConnected()
         {
-//            string userName;
-//            string connectionId = Context.ConnectionId;
-//            UserInfo userInfo = new UserInfo();
-//            Users.Add(connectionId, userInfo);
-//            if (Context.User.Identity.IsAuthenticated)
-//            {
-//                userName = Context.User.Identity.Name.GetUserName().Trim().ToLower();
-//            } else
-//            {
-//                userName = KeyGenerator.GetUniqueKey(10);
-//            }
-//            userInfo.attUID = userName;
-//            Users[connectionId] = userInfo;
-//            ShowActivity("caller", "Welcome " + userName);
-//            ShowActivity("others", "Connection: " + userName);
-//            Clients.Caller.updateUserName(userName); // Update UserName 
+            //            string userName;
+            //            string connectionId = Context.ConnectionId;
+            //            UserInfo userInfo = new UserInfo();
+            //            Users.Add(connectionId, userInfo);
+            //            if (Context.User.Identity.IsAuthenticated)
+            //            {
+            //                userName = Context.User.Identity.Name.GetUserName().Trim().ToLower();
+            //            } else
+            //            {
+            //                userName = KeyGenerator.GetUniqueKey(10);
+            //            }
+            //            userInfo.attUID = userName;
+            //            Users[connectionId] = userInfo;
+            //            ShowActivity("caller", "Welcome " + userName);
+            //            ShowActivity("others", "Connection: " + userName);
+            //            Clients.Caller.updateUserName(userName); // Update UserName 
             return base.OnConnected();
         }
 

@@ -44,6 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Popup\Images\arrow_refresh.png" />
+    <Content Include="Popup\Scripts\jquery.jqtree.js" />
     <Content Include="Popup\Stylesheets\dictionary.css" />
     <Content Include="Popup\Stylesheets\Images\array.png" />
     <Content Include="Popup\Stylesheets\Images\date.png" />
@@ -73,6 +74,7 @@
     <Content Include="Popup\Stylesheets\Images\treeview-gray.gif" />
     <Content Include="Popup\Stylesheets\Images\treeview-red-line.gif" />
     <Content Include="Popup\Stylesheets\Images\treeview-red.gif" />
+    <Content Include="Popup\Stylesheets\jqtree.css" />
     <Content Include="Popup\Stylesheets\StyleSheet.css" />
     <Content Include="Popup\Stylesheets\treeview.css" />
     <Content Include="Scripts\jquery-3.1.1.slim.min.map" />

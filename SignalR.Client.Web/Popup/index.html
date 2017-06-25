@@ -49,6 +49,11 @@
     <script src="Scripts/jquery.treeview.js"></script>
     <!-- End Motive Dictionary -->
 
+    <!-- Begin Add JQTree -->
+    <link href="Stylesheets/jqtree.css" rel="stylesheet" type="text/css" />
+    <script src="Scripts/jquery.jqtree.js"></script>
+    <!-- End Add JQTree -->
+
     <link href="Stylesheets/StyleSheet.css" rel="stylesheet"  type="text/css" />
     <script src="Scripts/JavaScript.js"></script>
 </head>
@@ -65,6 +70,11 @@
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="flowHistoryWrapper">
+        <span id="flowHistoryWrapperStatus">SHOW </span>
+        FLOW HISTORY
+        <div id="flowHistoryTree" class="flowHistoryTree"></div>
     </div>
     <div class="row">
         <div class="col pending">
@@ -85,6 +95,5 @@
             </div>
         </div>
     </div>
-    <div class="temporary"></div>
  </body>
 </html>
