@@ -5,6 +5,14 @@
     hostname = window.location.hostname.split(".")[0];
     // Set the location of the SignalR HUB based on URL
     switch (window.location.hostname.toLowerCase().split(".")[0]) {
+        case "dev-windows":
+            $.connection.hub.url = "http://evainefaye.ddns.net:5500/signalr/";
+            version = "DEVELOPMENT - WINDOWS MONITOR";
+            break;
+        case "dev-linux":
+            $.connection.hub.url = "http://evainefaye.ddns.net:5500/signalr/";
+            version = "DEVELOPMENT - LINUX MONITOR";
+            break;
         case "fde":
             $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
             version = "FDE (FLOW DEVELOPMENT ENVIRONMENT)";

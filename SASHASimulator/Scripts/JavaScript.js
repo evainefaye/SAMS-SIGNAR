@@ -3,6 +3,16 @@
 $(document).ready(function () {
     // Set the location of the SignalR HUB based on URL
     switch (window.location.hostname.toLowerCase().split(".")[0]) {
+        case "dev-windows":
+            $.connection.hub.url = "http://evainefaye.ddns.net:5500/signalr/";
+            version = "DEVELOPMENT - WINDOWS SERVER";
+            monitorURL = "http://dev.hawkbane.biz";
+            break;
+        case "dev-linux":
+            $.connection.hub.url = "http://evainefaye.ddns.net:5500/signalr/";
+            version = "DEVELOPMENT - LINUX SERVER";
+            monitorURL = "http://dev.hawkbane.net";
+            break;
         case "fde":
             $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
             version = "FDE (FLOW DEVELOPMENT ENVIRONMENT)";

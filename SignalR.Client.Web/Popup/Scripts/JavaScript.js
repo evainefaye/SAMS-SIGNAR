@@ -1,24 +1,22 @@
 ﻿$(document).ready(function () {
 
+    hostname = window.location.hostname.split(".")[0];
+    // Set the location of the SignalR HUB based on URL
 
-    // Set the location of the HUB based on URL
-    switch (window.location.hostname.toLowerCase()) {
-        case "fde.client.sams.hawkbane.biz":
+    switch (window.location.hostname.toLowerCase().split(".")[0]) {
+        case "dev-windows":
+            $.connection.hub.url = "http://evainefaye.ddns.net:5500/signalr/";
+            break;
+        case "dev-linux":
+            $.connection.hub.url = "http://evainefaye.ddns.net:5500/signalr/";
+            break;
+        case "fde":
             $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
             break;
-        case "fde.hawkbane.biz":
-            $.connection.hub.url = "http://fde.server.sams.hawkbane.biz/signalr/";
-            break;
-        case "beta.client.sams.hawkbane.biz":
+        case "beta":
             $.connection.hub.url = "http://beta.server.sams.hawkbane.biz/signalr/";
             break;
-        case "beta.hawkbane.biz":
-            $.connection.hub.url = "http://beta.server.sams.hawkbane.biz/signalr/";
-            break;
-        case "prod.client.sams.hawkbane.biz":
-            $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
-            break;
-        case "prod.hawkbane.biz":
+        case "prod":
             $.connection.hub.url = "http://prod.server.sams.hawkbane.biz/signalr/";
             break;
         default:
